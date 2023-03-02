@@ -34,7 +34,7 @@ const Header = () => {
             <Container maxWidth='xl'>
                 <Grid container spacing={2}>
                     <Grid item xs={5}>
-                        <Stack direction='row'>
+                        <Stack direction='row' alignItems='center'>
                             <Toolbar>
                                 <IconButton
                                     size="large"
@@ -46,7 +46,9 @@ const Header = () => {
                                     <MenuIcon />
                                 </IconButton>
                             </Toolbar>
-                            <Logo width='160px' />
+                            <Link to='/'>
+                                <Logo width='160px' />
+                            </Link>
                         </Stack>
                     </Grid>
                     <Grid item xs={7}>
