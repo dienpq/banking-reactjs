@@ -14,7 +14,17 @@ const DataNotFound = (props) => {
                         </Box>
 
                         <Link to={props.pathBtn} className='text-decoration-none'>
-                            <Button variant="contained">{props.titleBtn}</Button>
+                            <Button
+                                variant="contained"
+                                sx={{
+                                    bgcolor: '#00c853',
+                                    '&:hover': {
+                                        bgcolor: '#00b34a',
+                                    }
+                                }}
+                            >
+                                {props.titleBtn}
+                            </Button>
                         </Link>
                     </Stack>
                 </Paper>

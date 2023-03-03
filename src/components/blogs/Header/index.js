@@ -1,15 +1,13 @@
-import { AppBar, Avatar, Button, Container, Grid, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typography, Stack } from '@mui/material';
+import { AppBar, Avatar, Button, Container, Grid, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typography, Stack, MenuList, Divider } from '@mui/material';
 import { ReactComponent as Logo } from '../../../assets/logo.svg';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Box } from '@mui/system';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 const pages = [
-    {
-        path: '/account/info',
-        title: 'Thông tin tài khoản'
-    },
     {
         path: '/bank-loan',
         title: 'Khoản vay'
@@ -19,16 +17,21 @@ const pages = [
         title: 'Thanh toán'
     }
 ]
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 const Header = () => {
     const [anchorElUser, setAnchorElUser] = useState(null);
+    const [hiddenAccountBalance, setHiddenAccountBalance] = useState(true);
+    const [accountBalance, setAccountBalance] = useState(1527000);
+
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
     };
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
     };
+    const handleHiddenAccountBalance = () => {
+        setHiddenAccountBalance(!hiddenAccountBalance)
+    }
     return (
         <AppBar position="fixed" color='inherit'>
             <Container maxWidth='xl'>
@@ -52,7 +55,7 @@ const Header = () => {
                         </Stack>
                     </Grid>
                     <Grid item xs={7}>
-                        <Stack direction='row'>
+                        <Stack direction='row' alignItems='center'>
                             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'end' }}>
                                 {pages.map((page) => (
                                     <Link to={page.path} className='text-decoration-none'>
@@ -65,11 +68,13 @@ const Header = () => {
                                     </Link>
                                 ))}
                             </Box>
-                            <Tooltip title="Open settings">
-                                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0, ml: 8 }}>
-                                    <Avatar />
-                                </IconButton>
-                            </Tooltip>
+                            <Box>
+                                <Tooltip title="Thông tin tài khoản">
+                                    <IconButton onClick={handleOpenUserMenu} sx={{ p: 0, ml: 8 }}>
+                                        <Avatar />
+                                    </IconButton>
+                                </Tooltip>
+                            </Box>
                             <Menu
                                 sx={{ mt: '45px' }}
                                 id="menu-appbar"
@@ -86,16 +91,63 @@ const Header = () => {
                                 open={Boolean(anchorElUser)}
                                 onClose={handleCloseUserMenu}
                             >
-                                {settings.map((setting) => (
-                                    <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                                        <Typography textAlign="center">{setting}</Typography>
+                                <MenuList sx={{ width: '180px', maxWidth: '100%', padding: '0' }}>
+                                    <Box padding='0.5rem 1rem'>
+                                        <Typography variant='body1' fontWeight='600'>Tài khoản chính</Typography>
+                                        <Typography variant='body2' noWrap fontWeight='600' color='#9e9e9e'>222340829</Typography>
+                                        <Stack direction='row' justifyContent='space-between' marginTop='4px'>
+                                            <Typography variant='body1' fontWeight='600' color='#616161'>
+                                                {
+                                                    hiddenAccountBalance ? '*** *** ***' :
+                                                        accountBalance + 'đ'
+                                                }
+                                            </Typography>
+                                            {
+                                                hiddenAccountBalance ? <VisibilityIcon
+                                                    fontSize='small'
+                                                    sx={{ cursor: 'pointer', color: '#616161' }}
+                                                    onClick={handleHiddenAccountBalance}
+                                                /> : <VisibilityOffIcon
+                                                    fontSize='small'
+                                                    sx={{ cursor: 'pointer', color: '#616161' }}
+                                                    onClick={handleHiddenAccountBalance}
+                                                />
+                                            }
+
+                                        </Stack>
+                                    </Box>
+                                    <Divider sx={{ marginY: '0.5rem' }} />
+                                    <MenuItem onClick={handleCloseUserMenu}>
+                                        <Link to='/account/info' className='text-decoration-none' style={{ width: '100%' }}>
+                                            <Typography textAlign='center' color='#000'>Thông tin cá nhân</Typography>
+                                        </Link>
                                     </MenuItem>
-                                ))}
+                                    <MenuItem onClick={handleCloseUserMenu}>
+                                        <Link to='/account/info' className='text-decoration-none' style={{ width: '100%' }}>
+                                            <Typography textAlign='center' color='#000'>Đổi mật khẩu</Typography>
+                                        </Link>
+                                    </MenuItem>
+                                    <Divider sx={{ marginY: '0.5rem' }} />
+                                    <MenuItem
+                                        onClick={handleCloseUserMenu}
+                                        sx={{
+                                            bgcolor: '#00c853',
+                                            '&:hover': {
+                                                bgcolor: '#00b34a',
+                                            }
+                                        }}
+                                    >
+                                        <Link className='text-decoration-none' style={{ width: '100%' }}>
+                                            <Typography textAlign='center' color='#fff'>Đăng xuất</Typography>
+                                        </Link>
+                                    </MenuItem>
+                                </MenuList>
                             </Menu>
                         </Stack>
                     </Grid>
                 </Grid>
             </Container>
+
             <Box bgcolor='#e0e0e0' height='30px' display='flex' alignItems='center'>
                 <Container fixed>
                     <Box width='100%' whiteSpace='nowrap' overflow='hidden' boxSizing='border-box'>
@@ -120,7 +172,7 @@ const Header = () => {
                     </Box>
                 </Container>
             </Box>
-        </AppBar>
+        </AppBar >
     );
 };
 
