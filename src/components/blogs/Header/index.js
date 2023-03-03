@@ -12,11 +12,11 @@ const pages = [
     },
     {
         path: '/bank-loan',
-        title: 'Vay tiền'
+        title: 'Khoản vay'
     },
     {
         path: '/pay-interest',
-        title: 'Trả lãi'
+        title: 'Thanh toán'
     }
 ]
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
