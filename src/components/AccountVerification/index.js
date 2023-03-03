@@ -1,10 +1,12 @@
 import { Box, Button, OutlinedInput, Paper, Stack, Typography } from "@mui/material";
-import { width } from "@mui/system";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Countdown from "../CountDown";
 
-const AccountVerification = () => {
+const AccountVerification = (props) => {
+    const [codeOTP, setCodeOTP] = useState('000000')
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
+    const [seconds, setSeconds] = useState(200)
+
     const inputRef1 = useRef(null);
     const inputRef2 = useRef(null);
     const inputRef3 = useRef(null);
@@ -39,10 +41,11 @@ const AccountVerification = () => {
                     break;
             }
         }
+
+        checkOTP(newOtp)
     };
 
     const handleKeyDown = (e, index) => {
-        console.log(inputRef1.current);
         if (e.key === 'Backspace' && !otp[index] && index > 0) {
             switch (index) {
                 case 1:
@@ -68,6 +71,21 @@ const AccountVerification = () => {
             }
         }
     };
+
+    const checkOTP = (newOtp) => {
+        let code = '';
+        newOtp.map((value) => {
+            code += value
+        })
+
+        if (codeOTP === code && code.length === 6) {
+            props.changeStep(2)
+        }
+    }
+
+    const handelResetOTP = () => {
+        setOtp(prevOTP => ['', '', '', '', '', '']);
+    }
 
     return (
         <>
@@ -164,7 +182,7 @@ const AccountVerification = () => {
 
                 <Stack direction='row' justifyContent='center' paddingTop='1rem'>
                     <Countdown
-                        seconds='200'
+                        seconds={seconds}
                         notification='Mã OTP sẽ hết hạn trong vòng'
                         notificationExpired='Mã OTP đã hết hạn'
                     />
@@ -173,6 +191,7 @@ const AccountVerification = () => {
                 <Stack direction='row' justifyContent='center' marginTop='2rem'>
                     <Button
                         variant="outlined"
+                        onClick={handelResetOTP}
                         sx={{
                             maxWidth: '300px',
                             width: '100%',

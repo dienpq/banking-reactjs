@@ -1,12 +1,17 @@
 import { Button, FormControl, MenuItem, OutlinedInput, Paper, Select, Typography } from "@mui/material";
 import { useState } from "react";
 
-const LoanRegisterStart = () => {
+const LoanRegisterStart = (props) => {
     const [nationality, setNationality] = useState('vietnam');
 
     const handleChangeNationality = (event) => {
         setNationality(event.target.value);
     };
+
+    const handleChangeStep = () => {
+        props.changeStep(1)
+    }
+
     return (
         <>
             <Paper elevation={3} sx={{ maxWidth: '500px', padding: '2rem', margin: '0 auto' }}>
@@ -58,6 +63,7 @@ const LoanRegisterStart = () => {
                 <Button
                     variant="contained"
                     size="large"
+                    onClick={handleChangeStep}
                     sx={{
                         bgcolor: '#00c853',
                         marginTop: '1rem',
