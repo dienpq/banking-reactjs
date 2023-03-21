@@ -1,5 +1,4 @@
 import { Box, Button, Grid, Paper, Stack, Step, StepLabel, Stepper, Tooltip, Typography } from "@mui/material";
-import ControlCameraIcon from '@mui/icons-material/ControlCamera';
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
 import { useState } from "react";
 import DebtRepaymentSource from "../declare/DebtRepaymentSource";
@@ -7,21 +6,28 @@ import InfoCustomer from "../declare/InfoCustomer";
 import InfoJob from "../declare/InfoJob";
 import LoanPurpose from "../declare/LoanPurpose";
 import PrevUploadImage from "../PrevUploadImage";
+import InfoCollateral from "../declare/InfoCollateral";
+import Commitment from "../declare/Commitment";
 
 const steps = [
     'Thông tin khách hàng',
     'Thông tin nghề nghiệp',
     'Mục đích vay vốn',
     'Nguồn trả nợ',
-    'Thông tin tài sản bảo đảm'
+    'Thông tin tài sản bảo đảm',
+    'Cam kết'
 ];
 
-const InfoDeclaration = () => {
+const InfoDeclaration = (props) => {
     const [step, setStep] = useState(0)
     const [statusStep, setStatusStep] = useState(false)
 
     const handleChangeStep = (status) => {
-        setStep(status)
+        if (status === 6) {
+            props.changeStep(3)
+        } else {
+            setStep(status)
+        }
     }
 
     return (
@@ -160,7 +166,11 @@ const InfoDeclaration = () => {
                                     step === 2 ? <LoanPurpose changeStep={handleChangeStep} /> :
                                         // Nguồn trả nợ
                                         step === 3 ? <DebtRepaymentSource changeStep={handleChangeStep} /> :
-                                            null
+                                            // Thông tin tài sản đảm bảo
+                                            step === 4 ? <InfoCollateral changeStep={handleChangeStep} /> :
+                                                // Cam kết
+                                                step === 5 ? <Commitment changeStep={handleChangeStep} /> :
+                                                    null
                         }
                     </Grid>
                 </Grid>
