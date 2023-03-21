@@ -3,7 +3,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useState } from "react";
 
 const LoanRegisterResult = () => {
-    const [resultRegister, setResultRegister] = useState(0);
+    const [resultRegister] = useState(0);
     return (
         <>
             <Paper elevation={3} sx={{ maxWidth: '500px', height: '300px', padding: '2rem', margin: '0 auto' }}>

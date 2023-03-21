@@ -15,7 +15,8 @@ const steps = [
 ];
 
 const BankLoanRegister = () => {
-    const [step, setStep] = useState(5)
+    const [step, setStep] = useState(0)
+
     const handleChangeStep = (status) => {
         setStep(status)
     }

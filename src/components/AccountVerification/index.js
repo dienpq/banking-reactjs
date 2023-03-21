@@ -1,5 +1,5 @@
 import { Box, Button, OutlinedInput, Paper, Stack, Typography } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Countdown from "../CountDown";
 
 const AccountVerification = (props) => {
@@ -79,6 +79,7 @@ const AccountVerification = (props) => {
         })
 
         if (codeOTP === code && code.length === 6) {
+            sessionStorage.setItem('statusVerifi', true)
             props.changeStep(2)
         }
     }
