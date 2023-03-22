@@ -1,6 +1,5 @@
 import { Box, Grid } from '@mui/material';
 import { Container } from '@mui/system';
-import React from 'react';
 import OptionLoan from '../../components/OptionLoan';
 
 const BankLoanOpen = () => {

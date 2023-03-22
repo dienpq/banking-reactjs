@@ -1,11 +1,14 @@
 import { Box, Button, OutlinedInput, Paper, Stack, Typography } from "@mui/material";
-import { useRef, useState } from "react";
+import axios from "axios";
+import { useEffect, useRef, useState } from "react";
+import { generateRandomNumber } from "../../common";
 import Countdown from "../CountDown";
 
 const AccountVerification = (props) => {
-    const [codeOTP, setCodeOTP] = useState('000000')
+    const [codeOTP, setCodeOTP] = useState(generateRandomNumber(6))
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
-    const [seconds, setSeconds] = useState(200)
+    const [resetCountdown, setResetCountdown] = useState(false);
+    const [countResetOTP, setCountResetOTP] = useState(0)
 
     const inputRef1 = useRef(null);
     const inputRef2 = useRef(null);
@@ -13,6 +16,20 @@ const AccountVerification = (props) => {
     const inputRef4 = useRef(null);
     const inputRef5 = useRef(null);
     const inputRef6 = useRef(null);
+
+    useEffect(() => {
+        const user = JSON.parse(sessionStorage.getItem('user'));
+        let params = {
+            emailTo: user.email,
+            subject: "Mã OTP",
+            content: codeOTP
+        }
+        // axios.post("http://localhost:8080/mail/send", params)
+        //     .then((response) => {
+        //         console.log(response.data);
+        //     })
+        //     .catch(error => console.log(error));
+    }, [codeOTP])
 
     const handleInputChange = (e, index) => {
         const newOtp = [...otp];
@@ -79,13 +96,14 @@ const AccountVerification = (props) => {
         })
 
         if (codeOTP === code && code.length === 6) {
-            sessionStorage.setItem('statusVerifi', true)
             props.changeStep(2)
         }
     }
 
     const handelResetOTP = () => {
+        setCodeOTP(prevCodeOTP => generateRandomNumber(6))
         setOtp(prevOTP => ['', '', '', '', '', '']);
+        setResetCountdown(prevResetCountDown => true);
     }
 
     return (
@@ -183,7 +201,9 @@ const AccountVerification = (props) => {
 
                 <Stack direction='row' justifyContent='center' paddingTop='1rem'>
                     <Countdown
-                        seconds={seconds}
+                        seconds={200}
+                        reset={resetCountdown}
+                        onReset={() => setResetCountdown(false)}
                         notification='Mã OTP sẽ hết hạn trong vòng'
                         notificationExpired='Mã OTP đã hết hạn'
                     />

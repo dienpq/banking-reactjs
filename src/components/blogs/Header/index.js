@@ -57,8 +57,8 @@ const Header = () => {
                     <Grid item xs={7}>
                         <Stack direction='row' alignItems='center'>
                             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'end' }}>
-                                {pages.map((page) => (
-                                    <Link to={page.path} className='text-decoration-none'>
+                                {pages.map((page, index) => (
+                                    <Link to={page.path} key={index} className='text-decoration-none'>
                                         <Button
                                             key={page.title}
                                             sx={{ my: 2, mx: 1 }}

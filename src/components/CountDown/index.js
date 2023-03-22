@@ -2,11 +2,17 @@ import { Typography } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 
 function Countdown(props) {
-    const [seconds, setSeconds] = useState(props.seconds);
+    const { seconds, reset, onReset } = props;
+
+    const [countdownSeconds, setCountdownSeconds] = useState(seconds);
+
+    useEffect(() => {
+        setCountdownSeconds(seconds);
+    }, [reset]);
 
     useEffect(() => {
         const intervalId = setInterval(() => {
-            setSeconds(prevSeconds => prevSeconds > 0 ? prevSeconds - 1 : 0);
+            setCountdownSeconds(prevSeconds => prevSeconds > 0 ? prevSeconds - 1 : 0);
         }, 1000);
 
         return () => {
@@ -14,13 +20,19 @@ function Countdown(props) {
         };
     }, []);
 
+    useEffect(() => {
+        if (reset) {
+            onReset();
+        }
+    }, [countdownSeconds, onReset]);
+
     return (
         <div>
             {
-                seconds === 0 ? <Typography variant='body2'>{props.notificationExpired}</Typography> :
+                countdownSeconds === 0 ? <Typography variant='body2' color="#f44336">{props.notificationExpired}</Typography> :
                     <Typography>
                         {props.notification}
-                        <Typography component='span' color='#00c853'> {seconds}s</Typography>
+                        <Typography component='span' color='#00c853'> {countdownSeconds}s</Typography>
                     </Typography>
             }
         </div>

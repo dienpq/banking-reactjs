@@ -18,7 +18,7 @@ const LoanRegisterStart = (props) => {
         },
         validationSchema,
         onSubmit: (values) => {
-            sessionStorage.setItem('user', JSON.stringify(values));
+            sessionStorage.setItem('user', JSON.stringify(values))
             props.changeStep(1)
         },
     });
