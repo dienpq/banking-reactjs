@@ -1,22 +1,13 @@
-import { Box, Button, Checkbox, FormControl, FormControlLabel, FormGroup, FormHelperText, Grid, MenuItem, Paper, Radio, RadioGroup, Select, Stack, TextField, Typography } from "@mui/material";
+import { Box, Button, Checkbox, FormControl, FormControlLabel, FormGroup, FormHelperText, Grid, MenuItem, Paper, Radio, RadioGroup, Stack, TextField, Typography } from "@mui/material";
 import { DateField, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Form, Formik } from "formik";
 import * as yup from "yup";
-
-yup.addMethod(yup.object, "checkBoxRequired", function (errorMessage) {
-    return this.test(`test-check-type`, errorMessage, function (obj) {
-        const { path, createError } = this;
-
-        return (
-            Object.values(obj).some(value => value === true) ||
-            createError({ path, message: errorMessage })
-        );
-    });
-});
+import { checkBoxRequired } from "../../../yupUtils.js";
 
 const validationSchema = yup.object().shape({
     fullname: yup.string().required("Họ và tên là trường bắt buộc"),
+    birthday: yup.string().required("Ngày cấp là trường bắt buộc"),
     idNumber: yup.string().required("Số CCCD/CMND/Hộ chiếu là trường bắt buộc"),
     issuedDate: yup.string().required("Ngày cấp là trường bắt buộc"),
     issuedPlace: yup.string().required("Nơi cấp là trường bắt buộc"),
@@ -32,14 +23,14 @@ const validationSchema = yup.object().shape({
         if (applyValidation[0] === "other")
             return schema.required('Trình độ học vấn là trường bắt buộc')
     }),
-    homeOwnership: yup.object().checkBoxRequired("Hình thức sở hữu nhà ở phải chọn ít nhất một ô"),
+    homeOwnership: checkBoxRequired("Hình thức sở hữu nhà ở phải chọn ít nhất một ô"),
     homeOwnershipOther: yup.string().when("homeOwnership", (applyValidation, schema) => {
-        if (applyValidation[0].other === true)
+        if (applyValidation[0].other)
             return schema.required('Hình thức sở hữu nhà ở là trường bắt buộc')
     }),
-    vehicles: yup.object().checkBoxRequired("Phương tiện đi lại phải chọn ít nhất một ô"),
+    vehicles: checkBoxRequired("Phương tiện đi lại phải chọn ít nhất một ô"),
     vehiclesOther: yup.string().when("vehicles", (applyValidation, schema) => {
-        if (applyValidation[0].other === true)
+        if (applyValidation[0].other)
             return schema.required('Phương tiện đi lại ở là trường bắt buộc')
     }),
 });
@@ -59,7 +50,7 @@ const InfoCustomer = (props) => {
         email: "",
         marital: "Độc thân",
         maritalOther: "",
-        academicLevel: "THCS",
+        academicLevel: "THPT",
         academicLevelOther: "",
         homeOwnership: {
             "Nhà riêng và trả hoàn toàn": false,
@@ -79,9 +70,8 @@ const InfoCustomer = (props) => {
     }
 
     const onSubmit = (values) => {
-        console.log(values);
         sessionStorage.setItem('customer', JSON.stringify(values))
-        // props.changeStep(2)
+        props.changeStep(2)
     }
 
     return (
@@ -475,47 +465,20 @@ const InfoCustomer = (props) => {
                                                 <Typography component='span' color='#f44336'> *</Typography>
                                             </Typography>
                                             <FormGroup>
-                                                <FormControlLabel
-                                                    value='Nhà riêng và trả hoàn toàn'
-                                                    name='homeOwnership'
-                                                    control={<Checkbox name="homeOwnership['Nhà riêng và trả hoàn toàn']" checked={values.homeOwnership["Nhà riêng và trả hoàn toàn"]} onChange={handleChange} />}
-                                                    label="Nhà riêng và trả hoàn toàn"
-                                                />
-                                                <FormControlLabel
-                                                    value='Nhà riêng và thế chấp'
-                                                    name='homeOwnership'
-                                                    control={<Checkbox name="homeOwnership['Nhà riêng và thế chấp']" checked={values.homeOwnership["Nhà riêng và thế chấp"]} onChange={handleChange} />}
-                                                    label="Nhà riêng và thế chấp"
-                                                />
-                                                <FormControlLabel
-                                                    value='Nhà công ty cung cấp'
-                                                    name='homeOwnership'
-                                                    control={<Checkbox name="homeOwnership['Nhà công ty cung cấp']" checked={values.homeOwnership["Nhà công ty cung cấp"]} onChange={handleChange} />}
-                                                    label="Nhà công ty cung cấp"
-                                                />
-                                                <FormControlLabel
-                                                    value='Nhà thuê'
-                                                    name='homeOwnership'
-                                                    control={<Checkbox name="homeOwnership['Nhà thuê']" checked={values.homeOwnership["Nhà thuê"]} onChange={handleChange} />}
-                                                    label="Nhà thuê"
-                                                />
-                                                <FormControlLabel
-                                                    value='Nhà ở cùng bố mẹ, bạn bè, họ hàng'
-                                                    name='homeOwnership'
-                                                    control={<Checkbox name="homeOwnership['Nhà ở cùng bố mẹ, bạn bè, họ hàng']" checked={values.homeOwnership["Nhà ở cùng bố mẹ, bạn bè, họ hàng"]} onChange={handleChange} />}
-                                                    label="Nhà ở cùng bố mẹ, bạn bè, họ hàng"
-                                                />
-                                                <FormControlLabel
-                                                    value='other'
-                                                    name='homeOwnership'
-                                                    control={<Checkbox name="homeOwnership.other" checked={values.homeOwnership.other} onChange={handleChange} />}
-                                                    label="Khác (Ghi rõ)"
-                                                />
+                                                {
+                                                    Object.keys(values.homeOwnership).map((key) => (
+                                                        <FormControlLabel
+                                                            key={key}
+                                                            control={<Checkbox name={`homeOwnership.${key}`} checked={values.homeOwnership[key]} onChange={handleChange} />}
+                                                            label={key === 'other' ? 'Khác (Ghi rõ)' : key}
+                                                        />
+                                                    ))
+                                                }
                                             </FormGroup>
+                                            <FormHelperText error sx={{ margin: 0, marginTop: '4px' }} >
+                                                {errors.homeOwnership && touched.homeOwnership && errors.homeOwnership}
+                                            </FormHelperText>
                                         </FormControl>
-                                        <FormHelperText error sx={{ margin: 0, marginTop: '4px' }} >
-                                            {errors.homeOwnership && touched.homeOwnership && errors.homeOwnership}
-                                        </FormHelperText>
                                     </Grid>
                                     {
                                         values.homeOwnership.other ? <Grid item xs={12}>
@@ -547,24 +510,15 @@ const InfoCustomer = (props) => {
                                                 <Typography component='span' color='#f44336'> *</Typography>
                                             </Typography>
                                             <FormGroup>
-                                                <FormControlLabel
-                                                    name="vehicles"
-                                                    value='Ô tô'
-                                                    control={<Checkbox name="vehicles['Ô tô']" checked={values.vehicles["Ô tô"]} onChange={handleChange} />}
-                                                    label="Ô tô"
-                                                />
-                                                <FormControlLabel
-                                                    name="vehicles"
-                                                    value='Xe máy'
-                                                    control={<Checkbox name="vehicles['Xe máy']" checked={values.vehicles["Xe máy"]} onChange={handleChange} />}
-                                                    label="Xe máy"
-                                                />
-                                                <FormControlLabel
-                                                    name="vehicles"
-                                                    value='other'
-                                                    control={<Checkbox name="vehicles['other']" checked={values.vehicles.other} onChange={handleChange} />}
-                                                    label="Khác (Ghi rõ)"
-                                                />
+                                                {
+                                                    Object.keys(values.vehicles).map((key) => (
+                                                        <FormControlLabel
+                                                            key={key}
+                                                            control={<Checkbox name={`vehicles.${key}`} checked={values.vehicles[key]} onChange={handleChange} />}
+                                                            label={key === 'other' ? 'Khác (Ghi rõ)' : key}
+                                                        />
+                                                    ))
+                                                }
                                             </FormGroup>
                                             <FormHelperText error sx={{ margin: 0, marginTop: '4px' }} >
                                                 {errors.vehicles && touched.vehicles && errors.vehicles}
