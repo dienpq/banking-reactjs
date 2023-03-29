@@ -72,10 +72,10 @@ const InfoCustomer = (props) => {
         let infoCustomer = {
             fullname: values.fullname,
             gender: values.gender,
-            birthday: `${values.birthday.$D}/${values.birthday.$M + 1}/${values.birthday.$y}`,
+            birthday: values.birthday.toISOString(),
             nationality: values.nationality,
             idNumber: values.idNumber,
-            issuedDate: `${values.issuedDate.$D}/${values.issuedDate.$M + 1}/${values.issuedDate.$y}`,
+            issuedDate: values.issuedDate.toISOString(),
             issuedPlace: values.issuedPlace,
             permanentAddress: values.permanentAddress,
             currentResidence: values.currentResidence,

@@ -1,7 +1,29 @@
 import { Button, Grid, Paper, Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
+import axios from "axios";
 
 const Commitment = (props) => {
+    const handleConfirm = () => {
+        const customer = JSON.parse(sessionStorage.getItem("customer"))
+        const job = JSON.parse(sessionStorage.getItem("job"))
+        const loanPurpose = JSON.parse(sessionStorage.getItem("loanPurpose"))
+        const debtRepaymentSource = JSON.parse(sessionStorage.getItem("debtRepaymentSource"))
+        const collaterals = JSON.parse(sessionStorage.getItem("collaterals"))
+
+        const params = {
+            ...customer,
+            ...job,
+            ...loanPurpose,
+            ...debtRepaymentSource,
+            loanId: 1
+        }
+        axios.post("http://localhost:8080/contract", params)
+            .then((response) => {
+                console.log(response.data);
+                props.changeStep(6);
+            })
+            .catch(error => console.log(error));
+    }
     return (
         <>
             <Paper>
@@ -33,7 +55,7 @@ const Commitment = (props) => {
                                     Quay lại
                                 </Button>
 
-                                <Button variant="contained" onClick={() => props.changeStep(6)}>Xong</Button>
+                                <Button variant="contained" onClick={handleConfirm}>Xong</Button>
                             </Stack>
                         </Grid>
                     </Grid>
