@@ -1,6 +1,7 @@
 import { Box, Button, Checkbox, FormControl, FormControlLabel, FormGroup, FormHelperText, Grid, Paper, Stack, TextField, Typography } from "@mui/material";
 import { Form, Formik } from "formik";
 import * as yup from "yup";
+import { formatDataObject } from "../../../common";
 import { checkBoxRequired } from "../../../yupUtils";
 
 const validationSchema = yup.object().shape({
@@ -59,7 +60,15 @@ const InfoJob = (props) => {
     }
 
     const onSubmit = (values) => {
-        sessionStorage.setItem('job', JSON.stringify(values))
+        const jobInfo = {
+            nameCompany: values.nameCompany,
+            phoneCompany: values.phoneCompany,
+            addressCompany: values.addressCompany,
+            job: formatDataObject(values.job, values.jobOther),
+            typeContractJob: formatDataObject(values.typeContractJob, values.typeContractJobOther),
+            typeReceiveWage: formatDataObject(values.typeReceiveWage, values.typeReceiveWageOther),
+        }
+        sessionStorage.setItem('job', JSON.stringify(jobInfo))
         props.changeStep(2)
     }
 

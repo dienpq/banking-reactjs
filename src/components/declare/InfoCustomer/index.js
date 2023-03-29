@@ -3,6 +3,7 @@ import { DateField, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Form, Formik } from "formik";
 import * as yup from "yup";
+import { formatDataObject } from "../../../common.js";
 import { checkBoxRequired } from "../../../yupUtils.js";
 
 const validationSchema = yup.object().shape({
@@ -68,7 +69,24 @@ const InfoCustomer = (props) => {
     }
 
     const onSubmit = (values) => {
-        sessionStorage.setItem('customer', JSON.stringify(values))
+        let infoCustomer = {
+            fullname: values.fullname,
+            gender: values.gender,
+            birthday: `${values.birthday.$D}/${values.birthday.$M + 1}/${values.birthday.$y}`,
+            nationality: values.nationality,
+            idNumber: values.idNumber,
+            issuedDate: `${values.issuedDate.$D}/${values.issuedDate.$M + 1}/${values.issuedDate.$y}`,
+            issuedPlace: values.issuedPlace,
+            permanentAddress: values.permanentAddress,
+            currentResidence: values.currentResidence,
+            phone: values.phone,
+            email: values.email,
+            marital: values.marital === "other" ? values.maritalOther : values.marital,
+            academicLevel: values.academicLevel === "other" ? values.academicLevelOther : values.academicLevel,
+            homeOwnership: formatDataObject(values.homeOwnership, values.homeOwnershipOther),
+            vehicles: formatDataObject(values.vehicles, values.vehiclesOther),
+        }
+        sessionStorage.setItem('customer', JSON.stringify(infoCustomer))
         props.changeStep(1)
     }
 
@@ -172,13 +190,13 @@ const InfoCustomer = (props) => {
                                                 disabled
                                                 variant="standard"
                                                 id="select-nationality"
-                                                name="national"
+                                                name="nationality"
                                                 defaultValue="Việt Nam"
-                                                value={values.national}
+                                                value={values.nationality}
                                                 onChange={handleChange}
                                                 onBlur={handleBlur}
-                                                error={touched.national && Boolean(errors.national)}
-                                                helperText={touched.national && errors.national}
+                                                error={touched.nationality && Boolean(errors.nationality)}
+                                                helperText={touched.nationality && errors.nationality}
                                                 sx={{
                                                     marginTop: '0 !important',
                                                     '& .css-1wc848c-MuiFormHelperText-root': {

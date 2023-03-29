@@ -2,6 +2,7 @@ import { Box, Button, Checkbox, FormControl, FormControlLabel, FormGroup, FormHe
 import { Form, Formik } from "formik";
 import React from "react";
 import * as yup from "yup";
+import { formatDataObject } from "../../../common";
 import { checkBoxRequired } from "../../../yupUtils";
 
 yup.addMethod(yup.object, "checkBoxRequiredCustom", function (errorMessage) {
@@ -189,7 +190,39 @@ const LoanPurpose = (props) => {
   }
 
   const onSubmit = (values) => {
-    sessionStorage.setItem('loan-purpose', JSON.stringify(values))
+    let loanPurpose = ""
+    Object.keys(values.loanPurpose).filter(key => values.loanPurpose[key].index).map((key) => {
+      if (key !== "other") {
+        let purpose = ""
+        Object.keys(values.loanPurpose[key].purpose).filter(keySub => values.loanPurpose[key].purpose[keySub]).map((keySub) => {
+          purpose += (keySub === "other" ? values.loanPurpose[key].purposeOther : keySub) + "|"
+        })
+        purpose = purpose.slice(0, -1)
+
+        let type = ""
+        if ("type" in values.loanPurpose[key]) {
+          Object.keys(values.loanPurpose[key].type.option).filter(keySub => values.loanPurpose[key].type.option[keySub]).map((keySub) => {
+            type += (keySub === "other" ? values.loanPurpose[key].type.optionOther : keySub) + "|"
+          })
+          type = type.slice(0, -1)
+        }
+
+        loanPurpose += key + "-" + purpose + "-" + (type ? type + "-" : "") + values.loanPurpose[key].description.content + "||"
+      } else {
+        loanPurpose += "Vay khác" + "-" + values.loanPurpose[key].content + "||"
+      }
+    })
+    loanPurpose = loanPurpose.slice(0, -2)
+
+    const loanPurposeInfo = {
+      loanPurpose: loanPurpose,
+      priceLoan: values.priceLoan,
+      timeLoan: values.timeLoan,
+      timeLoanCurrent: values.timeLoanCurrent,
+      debtPaymentMethod: formatDataObject(values.debtPaymentMethod, values.debtPaymentMethodOther),
+      otherSuggestions: values.otherSuggestions,
+    }
+    sessionStorage.setItem('loan-purpose', JSON.stringify(loanPurposeInfo))
     props.changeStep(3)
   }
 
