@@ -190,7 +190,7 @@ const LoanPurpose = (props) => {
 
   const onSubmit = (values) => {
     sessionStorage.setItem('loan-purpose', JSON.stringify(values))
-    // props.changeStep(2)
+    props.changeStep(3)
   }
 
   return (

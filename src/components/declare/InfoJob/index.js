@@ -60,7 +60,7 @@ const InfoJob = (props) => {
 
     const onSubmit = (values) => {
         sessionStorage.setItem('job', JSON.stringify(values))
-        // props.changeStep(2)
+        props.changeStep(2)
     }
 
     return (

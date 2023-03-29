@@ -13,10 +13,10 @@ const LoanRegisterStart = (props) => {
         fullname: '',
         phone: '',
         email: '',
-        nationality: 'vietnam'
+        nationality: 'Việt Nam'
     }
     const onSubmit = (values) => {
-        sessionStorage.setItem('user', JSON.stringify(values))
+        sessionStorage.setItem('customer', JSON.stringify(values))
         props.changeStep(1)
     }
 
@@ -112,8 +112,8 @@ const LoanRegisterStart = (props) => {
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                 >
-                                    <MenuItem value='vietnam'>Việt Nam</MenuItem>
-                                    <MenuItem value='america'>Mỹ</MenuItem>
+                                    <MenuItem value='Việt Nam'>Việt Nam</MenuItem>
+                                    <MenuItem value='Mỹ'>Mỹ</MenuItem>
                                 </Select>
                             </FormControl>
                             <Button

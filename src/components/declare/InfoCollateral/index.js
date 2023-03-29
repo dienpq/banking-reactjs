@@ -33,7 +33,7 @@ const InfoCollateral = (props) => {
     const onSubmit = (values) => {
         console.log(values);
         sessionStorage.setItem('customer', JSON.stringify(values))
-        // props.changeStep(2)
+        props.changeStep(5)
     }
 
     return (

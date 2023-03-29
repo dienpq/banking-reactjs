@@ -33,7 +33,7 @@ const DebtRepaymentSource = (props) => {
     const onSubmit = (values) => {
         console.log(values);
         sessionStorage.setItem('debtRepaymentSource', JSON.stringify(values))
-        // props.changeStep(4)
+        props.changeStep(4)
     }
     return (
         <>

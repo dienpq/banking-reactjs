@@ -36,18 +36,16 @@ const validationSchema = yup.object().shape({
 });
 
 const InfoCustomer = (props) => {
+    const customer = JSON.parse(sessionStorage.getItem("customer"))
     const initialValues = {
-        fullname: "",
+        ...customer,
         gender: "",
         birthday: null,
-        national: "Việt Nam",
         idNumber: "",
         issuedDate: null,
         issuedPlace: "",
         permanentAddress: "",
         currentResidence: "",
-        phone: "",
-        email: "",
         marital: "Độc thân",
         maritalOther: "",
         academicLevel: "THPT",
@@ -71,7 +69,7 @@ const InfoCustomer = (props) => {
 
     const onSubmit = (values) => {
         sessionStorage.setItem('customer', JSON.stringify(values))
-        props.changeStep(2)
+        props.changeStep(1)
     }
 
     return (
@@ -98,6 +96,7 @@ const InfoCustomer = (props) => {
                                                 <Typography component='span' color='#f44336'> *</Typography>
                                             </Typography>
                                             <TextField
+                                                disabled
                                                 variant="standard"
                                                 placeholder="Vui lòng nhập Họ và tên"
                                                 name="fullname"
@@ -328,6 +327,7 @@ const InfoCustomer = (props) => {
                                                 <Typography component='span' color='#f44336'> *</Typography>
                                             </Typography>
                                             <TextField
+                                                disabled
                                                 variant="standard"
                                                 placeholder="09x-xxx-xx-91"
                                                 name="phone"
@@ -353,6 +353,7 @@ const InfoCustomer = (props) => {
                                                 <Typography component='span' color='#f44336'> *</Typography>
                                             </Typography>
                                             <TextField
+                                                disabled
                                                 variant="standard"
                                                 placeholder="example@gmail.com"
                                                 name="email"

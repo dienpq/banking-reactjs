@@ -18,9 +18,9 @@ const AccountVerification = (props) => {
     const inputRef6 = useRef(null);
 
     useEffect(() => {
-        const user = JSON.parse(sessionStorage.getItem('user'));
+        const customer = JSON.parse(sessionStorage.getItem('customer'));
         let params = {
-            emailTo: user.email,
+            emailTo: customer.email,
             subject: "Mã OTP",
             content: codeOTP
         }
