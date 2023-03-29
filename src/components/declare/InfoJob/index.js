@@ -74,7 +74,7 @@ const InfoJob = (props) => {
                     validationSchema={validationSchema}
                     onSubmit={onSubmit}
                 >
-                    {({ values, touched, errors, handleChange, handleBlur, setFieldValue }) => (
+                    {({ values, touched, errors, handleChange, handleBlur }) => (
                         <Form>
                             <Box padding='1rem'>
                                 <Grid container spacing={2}>

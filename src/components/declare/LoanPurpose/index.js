@@ -1,302 +1,551 @@
-import { Box, Button, Checkbox, FormControl, FormControlLabel, FormGroup, Grid, Paper, Stack, TextField, Typography } from "@mui/material";
-import { DateField, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { useState } from "react";
+import { Box, Button, Checkbox, FormControl, FormControlLabel, FormGroup, FormHelperText, Grid, Paper, Stack, TextField, Typography } from "@mui/material";
+import { Form, Formik } from "formik";
+import React from "react";
+import * as yup from "yup";
+import { checkBoxRequired } from "../../../yupUtils";
 
-const LoanPurpose = (props) => {
-    const [loanPurpose, setLoanPurpose] = useState([])
-
-    const [paymentWage, setPaymentWage] = useState([])
-    const handlePaymentWageChange = (event) => {
-        const value = event.target.value;
-        const index = paymentWage.indexOf(value);
-        if (index === -1) {
-            setPaymentWage([...paymentWage, value]);
-        } else {
-            setPaymentWage(paymentWage.filter((item) => item !== value));
-        }
-    };
+yup.addMethod(yup.object, "checkBoxRequiredCustom", function (errorMessage) {
+  return this.test(`test-check-type`, errorMessage, function (obj) {
+    const { path, createError } = this;
 
     return (
-        <>
-            <Paper>
-                <Box padding='0.5rem 1rem' bgcolor='#00c853' borderRadius='4px 4px 0 0'>
-                    <Typography fontSize='1.2rem' fontWeight='600'>Mục đích vay vốn</Typography>
-                </Box>
-                <Box padding='1rem'>
-                    <Grid container spacing={2}>
-                        {/* Mục đích */}
-                        <Grid item xs={12}>
-                            <FormControl sx={{ width: '100%' }}>
-                                <FormGroup onChange={handlePaymentWageChange}>
-                                    {/* Vay mua ô tô */}
-                                    <FormControlLabel value='1' control={<Checkbox checked={paymentWage.includes('1')} />} label="Vay mua ô tô" />
-                                    <Box>
+      Object.values(obj).some(value => value.index === true) ||
+      createError({ path, message: errorMessage })
+    );
+  });
+});
+
+const validationSchema = yup.object().shape({
+  loanPurpose: yup.object()
+    .checkBoxRequiredCustom("Vui lòng nhập ít nhất một ô")
+    .shape({
+      "Vay mua ô tô": yup.object().shape({
+        purpose: yup.object().when("index", (applyValidation) => {
+          if (applyValidation[0])
+            return checkBoxRequired("Vui lòng chọn ít nhất một ô")
+        }),
+        description: yup.object().when("index", (applyValidation) => {
+          if (applyValidation[0])
+            return yup.object().shape({
+              content: yup.string().required("Vui lòng nhập thông tin chủng loại xe")
+            })
+        }),
+      }),
+      "Vay phục vụ hoạt động sản xuất kinh doanh": yup.object().shape({
+        purpose: yup.object().when("index", (applyValidation) => {
+          if (applyValidation[0])
+            return checkBoxRequired("Vui lòng chọn ít nhất một ô")
+        }),
+        description: yup.object().when("index", (applyValidation) => {
+          if (applyValidation[0])
+            return yup.object().shape({
+              content: yup.string().required("Vui lòng nhập thông tin chi tiết mục đích vay")
+            })
+        }),
+      }),
+      "Vay mua bất động sản": yup.object().shape({
+        purpose: yup.object().when("index", (applyValidation) => {
+          if (applyValidation[0])
+            return checkBoxRequired("Vui lòng chọn ít nhất một ô")
+        }),
+        type: yup.object().when("index", (applyValidation) => {
+          if (applyValidation[0])
+            return yup.object().shape({
+              option: checkBoxRequired("Vui lòng chọn ít nhất một ô"),
+              optionOther: yup.string().when("option", (apply) => {
+                if (apply[0].other)
+                  return yup.string().required("Vui lòng nhập thông tin khác")
+              })
+            })
+        }),
+        purposeOther: yup.string().when("purpose", (apply) => {
+          if (apply[0].other)
+            return yup.string().required("Vui lòng nhập mục đích khác")
+        }),
+        description: yup.object().when("index", (applyValidation) => {
+          if (applyValidation[0])
+            return yup.object().shape({
+              content: yup.string().required("Vui lòng nhập thông tin chi tiết mục đích vay")
+            })
+        }),
+      }),
+      "Vay xây nhà / sửa nhà": yup.object().shape({
+        purpose: yup.object().when("index", (applyValidation) => {
+          if (applyValidation[0])
+            return checkBoxRequired("Vui lòng chọn ít nhất một ô")
+        }),
+        purposeOther: yup.string().when("purpose", (apply) => {
+          if (apply[0].other)
+            return yup.string().required("Vui lòng nhập mục đích khác")
+        }),
+        description: yup.object().when("index", (applyValidation) => {
+          if (applyValidation[0])
+            return yup.object().shape({
+              content: yup.string().required("Vui lòng nhập địa chỉ")
+            })
+        }),
+      }),
+      other: yup.object().shape({
+        content: yup.string().when("index", (applyValidation) => {
+          if (applyValidation[0])
+            return yup.string().required("Vui lòng nhập mục đích vay khác")
+        })
+      })
+    }),
+  priceLoan: yup.string().required("Vui lòng nhập số tiền cần vay"),
+  timeLoan: yup.string().required("Vui lòng nhập thời hạn vay"),
+  // timeLoanCurrent: yup.string().required("Vui lòng nhật số tiền cần vay"),// Vaidate số
+  debtPaymentMethod: checkBoxRequired("Vui lòng chọn ít nhất một ô"),
+  debtPaymentMethodOther: yup.string().when("debtPaymentMethod", (applyValidation, schema) => {
+    if (applyValidation[0].other)
+      return schema.required('Vui lòng nhập phương thức trả nợ khác')
+  }),
+})
+
+
+const LoanPurpose = (props) => {
+  const initialValues = {
+    loanPurpose: {
+      "Vay mua ô tô": {
+        index: false,
+        purpose: {
+          "Mua xe ô tô mới": false,
+          "Mua xe ô tô đã qua sử dụng": false,
+          "Hoàn vốn / Bù đắp mua xe ô tô": false,
+        },
+        description: {
+          title: "Tên chủng loại xe (hiệu xe - dòng xe - năm sản xuất)",
+          content: ""
+        },
+      },
+      "Vay phục vụ hoạt động sản xuất kinh doanh": {
+        index: false,
+        purpose: {
+          "Vay đầu tư TSCĐ": false,
+          "Vay bổ sung vốn / mở rộng / phát triển kinh doanh": false,
+          "Vay bổ sung vốn lưu động theo hạn mức": false,
+          "Vay thấu chi Tài khoản thanh toán HKD": false,
+        },
+        description: {
+          title: "Ghi chi tiết cụ thể mục đích vay",
+          content: ""
+        },
+      },
+      "Vay mua bất động sản": {
+        index: false,
+        purpose: {
+          "Để sử dụng": false,
+          "Để kinh doanh": false,
+          "other": false,
+        },
+        purposeOther: "",
+        type: {
+          title: "Loại BĐS",
+          option: {
+            "Chung cư": false,
+            "Nhà đất": false,
+            "Đất": false,
+            "BĐS chưa có giấy tờ chứng minh quyền sở hữu, sử dụng": false,
+            "BĐS có giấy tờ chứng minh quyền sở hữu, sử dụng": false,
+            "other": false,
+          },
+          optionOther: "",
+        },
+        description: {
+          title: "Ghi chi tiết cụ thể mục đích vay",
+          content: ""
+        },
+      },
+      "Vay xây nhà / sửa nhà": {
+        index: false,
+        purpose: {
+          "Để sử dụng": false,
+          "Để kinh doanh": false,
+          "other": false,
+        },
+        purposeOther: "",
+        description: {
+          title: "Địa chỉ",
+          content: ""
+        },
+      },
+      "other": {
+        index: false,
+        content: ""
+      },
+    },
+    priceLoan: "",
+    timeLoan: "",
+    timeLoanCurrent: "",
+    debtPaymentMethod: {
+      "Trả gốc đều hàng tháng, lãi trả hàng tháng": false,
+      "Trả gốc, lãi đều hàng tháng (Niên kim)": false,
+      "Trả gốc cuối kỳ, lãi hàng tháng": false,
+      "Trả gốc tăng dần, lãi giảm dần": false,
+      "other": false,
+    },
+    debtPaymentMethodOther: "",
+    otherSuggestions: "",
+  }
+
+  const onSubmit = (values) => {
+    sessionStorage.setItem('loan-purpose', JSON.stringify(values))
+    // props.changeStep(2)
+  }
+
+  return (
+    <>
+      <Paper>
+        <Box padding='0.5rem 1rem' bgcolor='#00c853' borderRadius='4px 4px 0 0'>
+          <Typography fontSize='1.2rem' fontWeight='600'>Mục đích vay vốn</Typography>
+        </Box>
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          onSubmit={onSubmit}
+        >
+          {({ values, touched, errors, handleChange, handleBlur }) => (
+            <Form>
+              <Box padding='1rem'>
+                <Grid container spacing={2}>
+                  {/* Mục đích */}
+                  <Grid item xs={12}>
+                    <FormControl sx={{ width: '100%' }}>
+                      <FormGroup>
+                        {
+                          Object.keys(values.loanPurpose).map((key) => (
+                            <React.Fragment key={key}>
+                              {
+                                key !== "other" ?
+                                  <>
+                                    <FormControlLabel
+                                      key={key}
+                                      label={key}
+                                      value={values.loanPurpose[key].index}
+                                      control={<Checkbox
+                                        name={`loanPurpose.${key}.index`}
+                                        checked={values.loanPurpose[key].index}
+                                        onChange={handleChange} />}
+                                    />
+                                    {
+                                      values.loanPurpose[key].index ? <Box>
                                         <Typography component='ul'>
-                                            <Typography component='li'>
-                                                <Typography>Mục đích</Typography>
+                                          <Typography component='li' key="purpose">
+                                            <Typography>Mục đích</Typography>
+                                            <FormGroup>
+                                              {
+                                                Object.keys(values.loanPurpose[key].purpose).map((keySub) => (
+                                                  <FormControlLabel
+                                                    key={keySub}
+                                                    control={<Checkbox name={`loanPurpose.${key}.purpose.${keySub}`} checked={values.loanPurpose[key].purpose[keySub]} onChange={handleChange} />}
+                                                    label={keySub === 'other' ? 'Khác (Ghi rõ)' : keySub}
+                                                  />
+                                                ))
+                                              }
+                                            </FormGroup>
+                                            {
+                                              values.loanPurpose[key].purpose?.other ? <FormControl sx={{ width: '100%' }}>
+                                                <TextField
+                                                  variant="standard"
+                                                  placeholder="Vui lòng nhập thông tin"
+                                                  name={`loanPurpose.${key}.purposeOther`}
+                                                  value={values.loanPurpose[key].purposeOther}
+                                                  onChange={handleChange}
+                                                  onBlur={handleBlur}
+                                                  error={touched.loanPurpose?.[key]?.purposeOther && Boolean(errors.loanPurpose?.[key]?.purposeOther)}
+                                                  helperText={touched.loanPurpose?.[key]?.purposeOther && errors.loanPurpose?.[key]?.purposeOther}
+                                                  sx={{
+                                                    '& .css-1wc848c-MuiFormHelperText-root': {
+                                                      margin: 0,
+                                                      marginTop: '4px'
+                                                    }
+                                                  }}
+                                                /></FormControl> : null
+                                            }
+                                          </Typography>
+                                          <FormHelperText error sx={{ margin: 0, marginTop: '4px' }} >
+                                            {errors.loanPurpose?.[key]?.purpose && touched.loanPurpose?.[key]?.purpose && errors.loanPurpose?.[key]?.purpose}
+                                          </FormHelperText>
+                                          {
+                                            "type" in values.loanPurpose[key] ?
+                                              <Typography component='li' key="type">
+                                                <Typography>{values.loanPurpose[key].type.title}</Typography>
                                                 <FormGroup>
-                                                    <FormControlLabel value='1' control={<Checkbox checked={paymentWage.includes('1')} />} label="Mua xe ô tô mới" />
-                                                    <FormControlLabel value='2' control={<Checkbox checked={paymentWage.includes('2')} />} label="Mua xe ô tô đã qua sử dụng" />
-                                                    <FormControlLabel value='3' control={<Checkbox checked={paymentWage.includes('3')} />} label="Hoàn vốn / Bù đắp mua xe ô tô" />
-                                                </FormGroup>
-                                            </Typography>
-                                            <Typography component='li'>
-                                                <Typography>Tên chủng loại xe (hiệu xe - dòng xe - năm sản xuất)</Typography>
-                                                <FormControl sx={{ width: '100%' }}>
-                                                    <TextField
-                                                        variant="standard"
-                                                        placeholder="Vui lòng nhập thông tin"
-                                                    />
-                                                </FormControl>
-                                            </Typography>
-                                        </Typography>
-                                    </Box>
-                                    {/* Vay phục vụ hoạt động sản xuất kinh doanh */}
-                                    <FormControlLabel value='2' control={<Checkbox checked={paymentWage.includes('2')} />} label="Vay phục vụ hoạt động sản xuất kinh doanh của Hộ kinh doanh" />
-                                    <Box>
-                                        <Typography component='ul'>
-                                            <Typography component='li'>
-                                                <Typography>Mục đích</Typography>
-                                                <FormGroup>
-                                                    <FormControlLabel value='1' control={<Checkbox checked={paymentWage.includes('1')} />} label="Vay đầu tư TSCĐ" />
-                                                    <FormControlLabel value='2' control={<Checkbox checked={paymentWage.includes('2')} />} label="Vay bổ sung vốn / mở rộng / phát triển kinh doanh" />
-                                                    <FormControlLabel value='3' control={<Checkbox checked={paymentWage.includes('3')} />} label="Vay bổ sung vốn lưu động theo hạn mức" />
-                                                    <FormControlLabel value='4' control={<Checkbox checked={paymentWage.includes('4')} />} label="Vay thấu chi Tài khoản thanh toán HKD" />
-                                                </FormGroup>
-                                            </Typography>
-                                            <Typography component='li'>
-                                                <Typography>Ghi chi tiết cụ thể mục đích vay</Typography>
-                                                <FormControl sx={{ width: '100%' }}>
-                                                    <TextField
-                                                        variant="standard"
-                                                        placeholder="Vui lòng nhập thông tin"
-                                                    />
-                                                </FormControl>
-                                            </Typography>
-                                        </Typography>
-                                    </Box>
-                                    {/* Vay mua bất động sản */}
-                                    <FormControlLabel value='3' control={<Checkbox checked={paymentWage.includes('2')} />} label="Vay mua bất động sản" />
-                                    <Box>
-                                        <Typography component='ul'>
-                                            <Typography component='li'>
-                                                <Typography>Mục đích</Typography>
-                                                <FormGroup>
-                                                    <FormControlLabel value='1' control={<Checkbox checked={paymentWage.includes('1')} />} label="Để sử dụng" />
-                                                    <FormControlLabel value='2' control={<Checkbox checked={paymentWage.includes('2')} />} label="Để kinh doanh" />
-                                                    <FormControlLabel value='0' control={<Checkbox checked={paymentWage.includes('3')} />} label="Khác" />
-                                                    <FormControl sx={{ width: '100%' }}>
+                                                  {
+                                                    Object.keys(values.loanPurpose[key].type.option).map((keyOption) => (
+                                                      <FormControlLabel
+                                                        key={keyOption}
+                                                        control={<Checkbox name={`loanPurpose.${key}.type.option.${keyOption}`} checked={values.loanPurpose[key].type.option[keyOption]} onChange={handleChange} />}
+                                                        label={keyOption === 'other' ? 'Khác (Ghi rõ)' : keyOption}
+                                                      />
+                                                    ))
+                                                  }
+                                                  {errors.loanPurpose?.[key] && errors.loanPurpose?.[key]?.type?.option && touched.loanPurpose?.[key]?.type?.option && (
+                                                    <FormHelperText error sx={{ margin: 0, marginTop: '4px' }} >
+                                                      {errors.loanPurpose?.[key]?.type?.option}
+                                                    </FormHelperText>
+                                                  )}
+                                                  {
+                                                    values.loanPurpose[key].type.option.other ?
+                                                      <FormControl sx={{ width: '100%' }}>
                                                         <TextField
-                                                            variant="standard"
-                                                            placeholder="Vui lòng nhập thông tin"
+                                                          variant="standard"
+                                                          placeholder="Vui lòng nhập thông tin"
+                                                          name={`loanPurpose.${key}.type.optionOther`}
+                                                          value={values.loanPurpose[key].type.optionOther}
+                                                          onChange={handleChange}
+                                                          onBlur={handleBlur}
+                                                          error={touched.loanPurpose?.[key]?.type?.optionOther && Boolean(errors.loanPurpose?.[key]?.type?.optionOther)}
+                                                          helperText={touched.loanPurpose?.[key]?.type?.optionOther && errors.loanPurpose?.[key]?.type?.optionOther}
+                                                          sx={{
+                                                            '& .css-1wc848c-MuiFormHelperText-root': {
+                                                              margin: 0,
+                                                              marginTop: '4px'
+                                                            }
+                                                          }}
                                                         />
-                                                    </FormControl>
+                                                      </FormControl>
+                                                      :
+                                                      null
+                                                  }
                                                 </FormGroup>
-                                            </Typography>
-                                            <Typography component='li'>
-                                                <Typography>Lọa BĐS</Typography>
-                                                <FormGroup>
-                                                    <FormControlLabel value='1' control={<Checkbox checked={paymentWage.includes('1')} />} label="Chung cư" />
-                                                    <FormControlLabel value='2' control={<Checkbox checked={paymentWage.includes('2')} />} label="Nhà đất" />
-                                                    <FormControlLabel value='2' control={<Checkbox checked={paymentWage.includes('2')} />} label="Đất" />
-                                                    <FormControlLabel value='0' control={<Checkbox checked={paymentWage.includes('3')} />} label="Khác" />
-                                                    <FormControl sx={{ width: '100%' }}>
-                                                        <TextField
-                                                            variant="standard"
-                                                            placeholder="Vui lòng nhập thông tin"
-                                                        />
-                                                    </FormControl>
-                                                    <FormControlLabel value='2' control={<Checkbox checked={paymentWage.includes('2')} />} label="BĐS chưa có giấy tờ chứng minh quyền sở hữu, sử dụng" />
-                                                    <FormControlLabel
-                                                        value='2'
-                                                        control={<Checkbox checked={paymentWage.includes('2')} />}
-                                                        label={
-                                                            <Box>
-                                                                <Typography>
-                                                                    BĐS có giấy tờ  chứng minh quyền sở hữu, sử dụng.
-                                                                    Giấy tờ chứng minh quyề sở hữu sử dụng số <TextField
-                                                                        variant="standard"
-                                                                        sx={{
-                                                                            width: '60px',
-                                                                            '& input': {
-                                                                                padding: '0'
-                                                                            }
-                                                                        }}
-                                                                    /> do <TextField
-                                                                        variant="standard"
-                                                                        sx={{
-                                                                            '& input': {
-                                                                                padding: '0'
-                                                                            }
-                                                                        }}
-                                                                    /> cấp ngày <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                                        <DateField
-                                                                            variant="standard"
-                                                                            sx={{
-                                                                                width: '130px',
-                                                                                '& input': {
-                                                                                    padding: '0'
-                                                                                }
-                                                                            }}
-                                                                        />
-                                                                    </LocalizationProvider> , tại địa chỉ: <TextField
-                                                                        variant="standard"
-                                                                        sx={{
-                                                                            width: '300px',
-                                                                            '& input': {
-                                                                                padding: '0'
-                                                                            }
-                                                                        }}
-                                                                    />
-                                                                </Typography>
-                                                            </Box>
-                                                        }
-                                                        sx={{ alignItems: 'start' }}
-                                                    />
-                                                </FormGroup>
-                                            </Typography>
+                                              </Typography>
+                                              : null
+                                          }
+
+                                          <Typography component='li' key="description">
+                                            <Typography>{values.loanPurpose[key].description.title}</Typography>
+                                            <FormControl sx={{ width: '100%' }}>
+                                              <TextField
+                                                variant="standard"
+                                                placeholder="Vui lòng nhập thông tin"
+                                                name={`loanPurpose.${key}.description.content`}
+                                                value={values.loanPurpose[key].description.content}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                                error={touched.loanPurpose?.[key]?.description?.content && Boolean(errors.loanPurpose?.[key]?.description?.content)}
+                                                helperText={touched.loanPurpose?.[key]?.description?.content && errors.loanPurpose?.[key]?.description?.content}
+                                                sx={{
+                                                  '& .css-1wc848c-MuiFormHelperText-root': {
+                                                    margin: 0,
+                                                    marginTop: '4px'
+                                                  }
+                                                }}
+                                              />
+                                            </FormControl>
+                                          </Typography>
                                         </Typography>
-                                    </Box>
-                                    {/* Vay xây nhà / sửa nhà */}
-                                    <FormControlLabel value='4' control={<Checkbox checked={paymentWage.includes('2')} />} label="Vay xây nhà / sửa chữa nhà" />
-                                    <Box>
-                                        <Typography component='ul'>
-                                            <Typography component='li'>
-                                                <Typography>Mục đích</Typography>
-                                                <FormGroup>
-                                                    <FormControlLabel value='1' control={<Checkbox checked={paymentWage.includes('1')} />} label="Để sử dụng" />
-                                                    <FormControlLabel value='2' control={<Checkbox checked={paymentWage.includes('2')} />} label="Để kinh doanh" />
-                                                    <FormControlLabel value='0' control={<Checkbox checked={paymentWage.includes('3')} />} label="Khác" />
-                                                    <TextField
-                                                        variant="standard"
-                                                        placeholder="Vui lòng nhập thông tin"
-                                                    />
-                                                </FormGroup>
-                                            </Typography>
-                                            <Typography component='li'>
-                                                <Typography>Địa chỉ</Typography>
-                                                <FormControl sx={{ width: '100%' }}>
-                                                    <TextField
-                                                        variant="standard"
-                                                        placeholder="Vui lòng địa chỉ"
-                                                    />
-                                                </FormControl>
-                                            </Typography>
-                                        </Typography>
-                                    </Box>
-                                    {/* Vay khác */}
-                                    <FormControlLabel value='0' control={<Checkbox checked={paymentWage.includes('0')} />} label="Vay khác" />
-                                    <FormControl sx={{ width: '100%' }}>
-                                        <TextField
+                                      </Box> : null
+                                    }
+                                  </>
+                                  :
+                                  <>
+                                    <FormControlLabel
+                                      key={key}
+                                      control={<Checkbox name="loanPurpose.other.index" checked={values.loanPurpose[key].index} onChange={handleChange} />}
+                                      label="Vay khác"
+                                    />
+                                    {
+                                      values.loanPurpose.other.index ?
+                                        <FormControl sx={{ width: '100%' }}>
+                                          <TextField
                                             multiline
                                             rows={4}
                                             placeholder='Vui lòng điền đủ thông tin về mục đích vay vốn'
-                                        />
-                                    </FormControl>
-                                </FormGroup>
-                            </FormControl>
-                        </Grid>
-                        {/* Số tiền vay */}
-                        <Grid item xs={6}>
-                            <Typography>Số tiền vay</Typography>
-                            <FormControl sx={{ width: '100%' }}>
-                                <TextField
-                                    variant="standard"
-                                    placeholder="Nhập số tiền"
-                                />
-                            </FormControl>
-                        </Grid>
-                        {/* Thời hạn vay */}
-                        <Grid item xs={6}>
-                            <Typography>Thời hạn vay (tháng)</Typography>
-                            <FormControl sx={{ width: '100%' }}>
-                                <TextField
-                                    variant="standard"
-                                    placeholder="Số tháng"
-                                />
-                            </FormControl>
-                        </Grid>
-                        {/* Ân hạn gốc */}
-                        <Grid item xs={6}>
-                            <Typography>Ân hạn gốc (tháng)</Typography>
-                            <FormControl sx={{ width: '100%' }}>
-                                <TextField
-                                    variant="standard"
-                                    placeholder="Số tháng"
-                                />
-                            </FormControl>
-                        </Grid>
-                        {/* Phương thức giải ngân */}
-                        <Grid item xs={6}>
-                            <Typography>Phương thức giải ngân</Typography>
-                            <FormControl sx={{ width: '100%' }}>
-                                <TextField
-                                    variant="standard"
-                                    disabled
-                                    value='Theo quy định của ngân hang VPBank'
-                                />
-                            </FormControl>
-                        </Grid>
-                        {/* Phương thức trả nợ */}
-                        <Grid item xs={12}>
-                            <FormControl sx={{ width: '100%' }}>
-                                <Typography component='label'>
-                                    Phương thức trả nợ
-                                    <Typography component='span' color='#f44336'> *</Typography>
-                                </Typography>
-                                <FormGroup onChange={handlePaymentWageChange}>
-                                    <FormControlLabel value='1' control={<Checkbox checked={paymentWage.includes('1')} />} label="Trả gốc đều hàng tháng, lãi trả hàng tháng" />
-                                    <FormControlLabel value='2' control={<Checkbox checked={paymentWage.includes('2')} />} label="Trả gốc, lãi đều hàng tháng (Niên kim)" />
-                                    <FormControlLabel value='3' control={<Checkbox checked={paymentWage.includes('0')} />} label="Trả gốc cuối kỳ, lãi hàng tháng" />
-                                    <FormControlLabel value='4' control={<Checkbox checked={paymentWage.includes('0')} />} label="Trả gốc tăng dần, lãi giảm dần" />
-                                    <FormControlLabel value='0' control={<Checkbox checked={paymentWage.includes('0')} />} label="Khác" />
-                                </FormGroup>
-                            </FormControl>
-                        </Grid>
-                        {
-                            paymentWage.includes('0') ? <Grid item xs={12}>
-                                <FormControl sx={{ width: '100%' }}>
-                                    <TextField
-                                        variant="standard"
-                                        placeholder="Ghi rõ Phương thức trả nợ "
-                                    />
-                                </FormControl>
-                            </Grid> : null
-                        }
-                        {/* Đề xuât khác */}
-                        <Grid item xs={12}>
-                            <FormControl sx={{ width: '100%' }}>
-                                <Typography component='label'>
-                                    Đề xuất khác
-                                </Typography>
-                                <TextField multiline rows={5} placeholder='Mô tả mục đích' />
-                            </FormControl>
-                        </Grid>
-                        {/* Nút điều khiển */}
-                        <Grid item xs={12}>
-                            <Stack direction='row' justifyContent='space-between'>
-                                <Button
-                                    variant="contained"
-                                    onClick={() => props.changeStep(1)}
-                                    sx={{
-                                        bgcolor: '#9e9e9e',
-                                        '&:hover': {
-                                            bgcolor: '#8c8c8c'
-                                        }
-                                    }}
-                                >
-                                    Quay lại
-                                </Button>
+                                            name="loanPurpose.other.content"
+                                            value={values.loanPurpose.other.content}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                            error={touched.loanPurpose?.other?.content && Boolean(errors.loanPurpose?.other?.content)}
+                                            helperText={touched.loanPurpose?.other?.content && errors.loanPurpose?.other?.content}
+                                            sx={{
+                                              '& .css-1wc848c-MuiFormHelperText-root': {
+                                                margin: 0,
+                                                marginTop: '4px'
+                                              }
+                                            }}
+                                          />
+                                        </FormControl>
+                                        : null
+                                    }
 
-                                <Button variant="contained" onClick={() => props.changeStep(3)}>Tiếp tục</Button>
-                            </Stack>
-                        </Grid>
-                    </Grid>
-                </Box>
-            </Paper>
-        </>
-    );
+                                  </>
+                              }
+                            </React.Fragment>
+                          ))
+                        }
+                      </FormGroup>
+                      {!Object.keys(values.loanPurpose).some((key) => !!errors.loanPurpose?.[key]) && (
+                        <FormHelperText error sx={{ margin: 0, marginTop: '4px' }} >
+                          {errors.loanPurpose && touched.loanPurpose && errors.loanPurpose}
+                        </FormHelperText>
+                      )}
+                    </FormControl>
+                  </Grid>
+                  {/* Số tiền vay */}
+                  <Grid item xs={6}>
+                    <Typography>Số tiền vay</Typography>
+                    <FormControl sx={{ width: '100%' }}>
+                      <TextField
+                        variant="standard"
+                        placeholder="Nhập số tiền"
+                        name="priceLoan"
+                        value={values.priceLoan}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={touched.priceLoan && Boolean(errors.priceLoan)}
+                        helperText={touched.priceLoan && errors.priceLoan}
+                        sx={{
+                          '& .css-1wc848c-MuiFormHelperText-root': {
+                            margin: 0,
+                            marginTop: '4px'
+                          }
+                        }}
+                      />
+                    </FormControl>
+                  </Grid>
+                  {/* Thời hạn vay */}
+                  <Grid item xs={6}>
+                    <Typography>Thời hạn vay (tháng)</Typography>
+                    <FormControl sx={{ width: '100%' }}>
+                      <TextField
+                        variant="standard"
+                        placeholder="Số tháng"
+                        name="timeLoan"
+                        value={values.timeLoan}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={touched.timeLoan && Boolean(errors.timeLoan)}
+                        helperText={touched.timeLoan && errors.timeLoan}
+                        sx={{
+                          '& .css-1wc848c-MuiFormHelperText-root': {
+                            margin: 0,
+                            marginTop: '4px'
+                          }
+                        }}
+                      />
+                    </FormControl>
+                  </Grid>
+                  {/* Ân hạn gốc */}
+                  <Grid item xs={6}>
+                    <Typography>Ân hạn gốc (tháng)</Typography>
+                    <FormControl sx={{ width: '100%' }}>
+                      <TextField
+                        variant="standard"
+                        placeholder="Số tháng"
+                        name="timeLoanCurrent"
+                        value={values.timeLoanCurrent}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={touched.timeLoanCurrent && Boolean(errors.timeLoanCurrent)}
+                        sx={{
+                          '& .css-1wc848c-MuiFormHelperText-root': {
+                            margin: 0,
+                            marginTop: '4px'
+                          }
+                        }}
+                      />
+                    </FormControl>
+                  </Grid>
+                  {/* Phương thức giải ngân */}
+                  <Grid item xs={6}>
+                    <Typography>Phương thức giải ngân</Typography>
+                    <FormControl sx={{ width: '100%' }}>
+                      <TextField
+                        variant="standard"
+                        disabled
+                        value='Theo quy định của ngân hang VPBank'
+                      />
+                    </FormControl>
+                  </Grid>
+                  {/* Phương thức trả nợ */}
+                  <Grid item xs={12}>
+                    <FormControl sx={{ width: '100%' }}>
+                      <Typography component='label'>
+                        Phương thức trả nợ
+                        <Typography component='span' color='#f44336'> *</Typography>
+                      </Typography>
+                      <FormGroup>
+                        {
+                          Object.keys(values.debtPaymentMethod).map((key) => (
+                            <FormControlLabel
+                              key={key}
+                              control={<Checkbox name={`debtPaymentMethod.${key}`} checked={values.debtPaymentMethod[key]} onChange={handleChange} />}
+                              label={key === 'other' ? 'Khác (Ghi rõ)' : key}
+                            />
+                          ))
+                        }
+                      </FormGroup>
+                      <FormHelperText error sx={{ margin: 0, marginTop: '4px' }} >
+                        {errors.debtPaymentMethod && touched.debtPaymentMethod && errors.debtPaymentMethod}
+                      </FormHelperText>
+                    </FormControl>
+                  </Grid>
+                  {
+                    values.debtPaymentMethod.other ? <Grid item xs={12}>
+                      <FormControl sx={{ width: '100%' }}>
+                        <TextField
+                          variant="standard"
+                          placeholder="Ghi rõ Phương thức trả nợ "
+                          name="debtPaymentMethodOther"
+                          value={values.debtPaymentMethodOther}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          error={touched.debtPaymentMethodOther && Boolean(errors.debtPaymentMethodOther)}
+                          helperText={touched.debtPaymentMethodOther && errors.debtPaymentMethodOther}
+                          sx={{
+                            '& .css-1wc848c-MuiFormHelperText-root': {
+                              margin: 0,
+                              marginTop: '4px'
+                            }
+                          }}
+                        />
+                      </FormControl>
+                    </Grid> : null
+                  }
+                  {/* Đề xuât khác */}
+                  <Grid item xs={12}>
+                    <FormControl sx={{ width: '100%' }}>
+                      <Typography component='label'>
+                        Đề xuất khác
+                      </Typography>
+                      <TextField
+                        multiline
+                        rows={5}
+                        placeholder='Mô tả mục đích'
+                        name="otherSuggestions"
+                        value={values.otherSuggestions}
+                        onChange={handleChange}
+                      />
+                    </FormControl>
+                  </Grid>
+                  {/* Nút điều khiển */}
+                  <Grid item xs={12}>
+                    <Stack direction='row' justifyContent='space-between'>
+                      <Button
+                        variant="contained"
+                        onClick={() => props.changeStep(1)}
+                        sx={{
+                          bgcolor: '#9e9e9e',
+                          '&:hover': {
+                            bgcolor: '#8c8c8c'
+                          }
+                        }}
+                      >
+                        Quay lại
+                      </Button>
+
+                      <Button variant="contained" type="submit">Tiếp tục</Button>
+                    </Stack>
+                  </Grid>
+                </Grid>
+              </Box>
+            </Form>
+          )}
+        </Formik>
+      </Paper>
+    </>
+  );
 };
 
 export default LoanPurpose;
