@@ -10,14 +10,3 @@ export const checkBoxRequired = (errorMessage) => {
         );
     });
 };
-
-export const checkBoxRequiredCustom = (errorMessage) => {
-    return yup.object().test(`test-check-type`, errorMessage, function (obj) {
-        const { path, createError } = this;
-
-        return (
-            Object.values(obj).some(value => value.index === true) ||
-            createError({ path, message: errorMessage })
-        );
-    });
-};
