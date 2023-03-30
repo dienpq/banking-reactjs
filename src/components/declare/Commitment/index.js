@@ -1,8 +1,10 @@
 import { Button, Grid, Paper, Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import axios from "axios";
+import { useParams } from "react-router-dom";
 
 const Commitment = (props) => {
+    const { type } = useParams();
     const handleConfirm = () => {
         const customer = JSON.parse(sessionStorage.getItem("customer"))
         const job = JSON.parse(sessionStorage.getItem("job"))
@@ -10,19 +12,42 @@ const Commitment = (props) => {
         const debtRepaymentSource = JSON.parse(sessionStorage.getItem("debtRepaymentSource"))
         const collaterals = JSON.parse(sessionStorage.getItem("collaterals"))
 
-        const params = {
-            ...customer,
-            ...job,
-            ...loanPurpose,
-            ...debtRepaymentSource,
-            loanId: 1
+        const loan = {
+            "priceRemaining": loanPurpose.priceLoan,
+            "des": "",
+            "userId": 1,
+            "typeLoanId": type
         }
-        axios.post("http://localhost:8080/contract", params)
+        console.log(loan);
+
+        axios.post("http://localhost:8080/loan", loan)
             .then((response) => {
                 console.log(response.data);
-                props.changeStep(6);
+                const contract = {
+                    ...customer,
+                    ...job,
+                    ...loanPurpose,
+                    ...debtRepaymentSource,
+                    loanId: response.data.id
+                }
+                axios.post("http://localhost:8080/contract", contract)
+                    .then((response) => {
+                        console.log(response.data);
+                        if (type === 2) {
+                            collaterals.map((collateral) => {
+                                axios.post("http://localhost:8080/collateral", { ...collateral, contractId: response.data.id })
+                                    .then((response) => {
+                                        console.log(response.data);
+                                    })
+                                    .catch(error => console.log(error));
+                            })
+                        }
+                        props.changeStep(6);
+                    })
+                    .catch(error => console.log(error));
             })
             .catch(error => console.log(error));
+
     }
     return (
         <>

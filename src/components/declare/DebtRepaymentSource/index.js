@@ -2,12 +2,14 @@ import { Box, Button, FormControl, Grid, Paper, TextField, Typography } from '@m
 import { Stack } from '@mui/system';
 import { Form, Formik } from 'formik';
 import { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import * as yup from "yup";
 
 const validationSchema = yup.object().shape({
     wage: yup.string().required("Vui lòng nhập lương và các khoản phụ cấp"),
 })
 const DebtRepaymentSource = (props) => {
+    const { type } = useParams();
     const initialValues = {
         wage: "",
         dividend: "",
@@ -32,7 +34,11 @@ const DebtRepaymentSource = (props) => {
 
     const onSubmit = (values) => {
         sessionStorage.setItem('debtRepaymentSource', JSON.stringify(values))
-        props.changeStep(4)
+        if (type == 2) {
+            props.changeStep(4)
+        } else {
+            props.changeStep(5)
+        }
     }
     return (
         <>

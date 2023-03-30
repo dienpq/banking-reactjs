@@ -33,7 +33,7 @@ const InfoJob = (props) => {
         "job": {
             "Cán bộ cấp quản lý": false,
             "Cán bộ cấp chuyên viên/nhân viên": false,
-            "Lực lượng vũ trang (quân đội, công an,...)": false,
+            "Lực lượng vũ trang": false,
             "Kinh doanh có đăng ký (KDCT)": false,
             "Nghỉ hưu": false,
             "Kinh doanh tự do/lao động thời vụ": false,

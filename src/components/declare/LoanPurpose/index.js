@@ -222,7 +222,7 @@ const LoanPurpose = (props) => {
       debtPaymentMethod: formatDataObject(values.debtPaymentMethod, values.debtPaymentMethodOther),
       otherSuggestions: values.otherSuggestions,
     }
-    sessionStorage.setItem('loan-purpose', JSON.stringify(loanPurposeInfo))
+    sessionStorage.setItem('loanPurpose', JSON.stringify(loanPurposeInfo))
     props.changeStep(3)
   }
 

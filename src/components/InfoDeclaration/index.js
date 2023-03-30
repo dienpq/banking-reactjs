@@ -19,7 +19,7 @@ const steps = [
 ];
 
 const InfoDeclaration = (props) => {
-    const [step, setStep] = useState(5)
+    const [step, setStep] = useState(3)
     const [statusStep, setStatusStep] = useState(false)
 
     const handleChangeStep = (status) => {
