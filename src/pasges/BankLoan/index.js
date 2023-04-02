@@ -50,6 +50,7 @@ const BankLoan = () => {
                                             code={value.loan.code}
                                             price={value.loan.priceRemaining}
                                             expiryDate="12/02/2023"
+                                            status={value.contract.status}
                                         />
                                     </Grid>
                                 ))

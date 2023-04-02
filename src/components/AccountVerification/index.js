@@ -5,10 +5,10 @@ import { generateRandomNumber } from "../../common";
 import Countdown from "../CountDown";
 
 const AccountVerification = (props) => {
-    const [codeOTP, setCodeOTP] = useState(generateRandomNumber(6))
+    const customer = JSON.parse(sessionStorage.getItem('customer'));
+    const [codeOTP, setCodeOTP] = useState(generateRandomNumber(6));
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
     const [resetCountdown, setResetCountdown] = useState(false);
-    const [countResetOTP, setCountResetOTP] = useState(0)
 
     const inputRef1 = useRef(null);
     const inputRef2 = useRef(null);
@@ -24,11 +24,11 @@ const AccountVerification = (props) => {
             subject: "Mã OTP",
             content: codeOTP
         }
-        // axios.post("http://localhost:8080/mail/send", params)
-        //     .then((response) => {
-        //         console.log(response.data);
-        //     })
-        //     .catch(error => console.log(error));
+        axios.post("http://localhost:8080/mail/send", params)
+            .then((response) => {
+                console.log(response.data);
+            })
+            .catch(error => console.log(error));
     }, [codeOTP])
 
     const handleInputChange = (e, index) => {
@@ -110,7 +110,7 @@ const AccountVerification = (props) => {
         <>
             <Paper elevation={3} sx={{ maxWidth: '500px', padding: '2rem', margin: '0 auto' }}>
                 <Typography fontWeight='700' color='#00c853'>Đăng ký ngay, nhận tiền liền tay</Typography>
-                <Typography variant="body1" marginTop='1rem'>Vui lòng nhập mã số OTP được gửi về email dienpq1604@gmail.com</Typography>
+                <Typography variant="body1" marginTop='1rem'>Vui lòng nhập mã số OTP được gửi về email {customer.email}</Typography>
 
                 <Stack direction='row' spacing={2} marginTop='2rem' justifyContent='center'>
                     <OutlinedInput
