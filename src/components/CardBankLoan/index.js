@@ -1,15 +1,27 @@
 import { Card, CardContent, CardHeader, Paper, Typography } from '@mui/material';
+import { Stack } from '@mui/system';
 import React from 'react';
 
-const CardBankLoan = () => {
+const CardBankLoan = (props) => {
     return (
         <>
             <Paper elevation={3}>
-                <Card>
+                <Card sx={{
+                    borderLeft: props.status == 1 ? "8px solid green" : props.status == -1 ? "8px solid red" : "8px solid yellow"
+                }}>
                     <CardHeader title={<Typography fontWeight='700' color='#616161'>
-                        Tên khoản vay
+                        {props.code}
                     </Typography>} />
-                    <CardContent></CardContent>
+                    <CardContent>
+                        <Stack direction="row" justifyContent="space-between">
+                            <Typography variant='body1'>
+                                {props.price} đ
+                            </Typography>
+                            <Typography variant='caption'>
+                                {props.expiryDate}
+                            </Typography>
+                        </Stack>
+                    </CardContent>
                 </Card>
             </Paper>
         </>

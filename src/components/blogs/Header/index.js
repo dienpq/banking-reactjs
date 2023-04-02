@@ -15,6 +15,10 @@ const pages = [
     {
         path: '/pay-interest',
         title: 'Thanh toán'
+    },
+    {
+        path: '/bank-loan/history',
+        title: 'Lịch sử đăng ký'
     }
 ]
 

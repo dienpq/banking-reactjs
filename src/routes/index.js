@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom"
 import Layout from "../layouts/Layout"
 import AccountInfo from "../pasges/AccountInfo"
 import BankLoan from "../pasges/BankLoan"
+import BankLoanHistory from "../pasges/BankLoanHistory"
 import BankLoanOpen from "../pasges/BankLoanOpen"
 import BankLoanRegister from "../pasges/BankLoanRegister"
 import Home from "../pasges/Home"
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
             {
                 path: '/pay-interest',  //trả lãi
                 element: <PayInterest />
+            },
+            {
+                path: '/bank-loan/history',  //lịch sử
+                element: <BankLoanHistory />
             },
         ]
     },
