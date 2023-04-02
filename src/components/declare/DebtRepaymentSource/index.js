@@ -32,7 +32,7 @@ const DebtRepaymentSource = (props) => {
 
     const onSubmit = (values) => {
         sessionStorage.setItem('debtRepaymentSource', JSON.stringify(values))
-        props.changeStep(4)
+        props.changeStep(props.step + 1)
     }
     return (
         <>
@@ -614,7 +614,7 @@ const DebtRepaymentSource = (props) => {
                                         <Stack direction='row' justifyContent='space-between'>
                                             <Button
                                                 variant="contained"
-                                                onClick={() => props.changeStep(2)}
+                                                onClick={() => props.changeStep(props.step - 1)}
                                                 sx={{
                                                     bgcolor: '#9e9e9e',
                                                     '&:hover': {

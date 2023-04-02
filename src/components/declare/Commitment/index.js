@@ -42,7 +42,7 @@ const Commitment = (props) => {
                                     .catch(error => console.log(error));
                             })
                         }
-                        props.changeStep(6);
+                        props.changeStep(props.step + 1);
                     })
                     .catch(error => console.log(error));
             })
@@ -69,7 +69,7 @@ const Commitment = (props) => {
                             <Stack direction='row' justifyContent='space-between'>
                                 <Button
                                     variant="contained"
-                                    onClick={() => props.changeStep(4)}
+                                    onClick={() => props.changeStep(props.step - 1)}
                                     sx={{
                                         bgcolor: '#9e9e9e',
                                         '&:hover': {

@@ -96,7 +96,7 @@ const AccountVerification = (props) => {
         })
 
         if (codeOTP === code && code.length === 6) {
-            props.changeStep(2)
+            props.changeStep(props.step + 1)
         }
     }
 

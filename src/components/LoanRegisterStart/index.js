@@ -17,7 +17,7 @@ const LoanRegisterStart = (props) => {
     }
     const onSubmit = (values) => {
         sessionStorage.setItem('customer', JSON.stringify(values))
-        props.changeStep(1)
+        props.changeStep(props.step + 1)
     }
 
     return (

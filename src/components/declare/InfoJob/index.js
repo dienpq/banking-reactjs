@@ -69,7 +69,7 @@ const InfoJob = (props) => {
             typeReceiveWage: formatDataObject(values.typeReceiveWage, values.typeReceiveWageOther),
         }
         sessionStorage.setItem('job', JSON.stringify(jobInfo))
-        props.changeStep(2)
+        props.changeStep(props.step + 1)
     }
 
     return (
@@ -302,7 +302,7 @@ const InfoJob = (props) => {
                                         <Stack direction='row' justifyContent='space-between'>
                                             <Button
                                                 variant="contained"
-                                                onClick={() => props.changeStep(0)}
+                                                onClick={() => props.changeStep(props.step - 1)}
                                                 sx={{
                                                     bgcolor: '#9e9e9e',
                                                     '&:hover': {

@@ -223,7 +223,7 @@ const LoanPurpose = (props) => {
       otherSuggestions: values.otherSuggestions,
     }
     sessionStorage.setItem('loanPurpose', JSON.stringify(loanPurposeInfo))
-    props.changeStep(3)
+    props.changeStep(props.step + 1)
   }
 
   return (
@@ -557,7 +557,7 @@ const LoanPurpose = (props) => {
                     <Stack direction='row' justifyContent='space-between'>
                       <Button
                         variant="contained"
-                        onClick={() => props.changeStep(1)}
+                        onClick={() => props.changeStep(props.step - 1)}
                         sx={{
                           bgcolor: '#9e9e9e',
                           '&:hover': {

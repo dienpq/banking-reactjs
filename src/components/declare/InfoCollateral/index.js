@@ -32,7 +32,7 @@ const InfoCollateral = (props) => {
 
     const onSubmit = (values) => {
         sessionStorage.setItem('collaterals', JSON.stringify(values.collaterals))
-        props.changeStep(5)
+        props.changeStep(props.step + 1)
     }
 
     return (
@@ -178,7 +178,7 @@ const InfoCollateral = (props) => {
                                                     <Stack direction='row' justifyContent='space-between'>
                                                         <Button
                                                             variant="contained"
-                                                            onClick={() => props.changeStep(3)}
+                                                            onClick={() => props.changeStep(props.step - 1)}
                                                             sx={{
                                                                 bgcolor: '#9e9e9e',
                                                                 '&:hover': {

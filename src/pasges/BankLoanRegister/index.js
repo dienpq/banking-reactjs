@@ -43,10 +43,10 @@ const BankLoanRegister = () => {
                 </Stepper>
 
                 {
-                    step === 0 ? <LoanRegisterStart changeStep={handleChangeStep} /> :
-                        step === 1 ? <AccountVerification changeStep={handleChangeStep} /> :
-                            step === 2 ? <InfoDeclaration changeStep={handleChangeStep} /> :
-                                step === 3 ? <WaitForConfirmation changeStep={handleChangeStep} /> : <LoanRegisterResult />
+                    step === 0 ? <LoanRegisterStart step={step} changeStep={handleChangeStep} /> :
+                        step === 1 ? <AccountVerification step={step} changeStep={handleChangeStep} /> :
+                            step === 2 ? <InfoDeclaration step={step} changeStep={handleChangeStep} /> :
+                                step === 3 ? <WaitForConfirmation step={step} changeStep={handleChangeStep} /> : <LoanRegisterResult />
                 }
             </Container>
         </>

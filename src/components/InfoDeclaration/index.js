@@ -32,7 +32,7 @@ const InfoDeclaration = (props) => {
 
     const handleChangeStep = (status) => {
         if (status === steps.length) {
-            props.changeStep(3)
+            props.changeStep(props.step + 1)
         } else {
             setStep(status)
         }
@@ -167,17 +167,17 @@ const InfoDeclaration = (props) => {
                     <Grid item xs={7}>
                         {
                             // Thông tin khách hàng
-                            step === 0 ? <InfoCustomer changeStep={handleChangeStep} /> :
+                            step === 0 ? <InfoCustomer step={step} changeStep={handleChangeStep} /> :
                                 // Thông tin nghề nghiệp
-                                step === 1 ? <InfoJob changeStep={handleChangeStep} /> :
+                                step === 1 ? <InfoJob step={step} changeStep={handleChangeStep} /> :
                                     // Mục đích vay vốn
-                                    step === 2 ? <LoanPurpose changeStep={handleChangeStep} /> :
+                                    step === 2 ? <LoanPurpose step={step} changeStep={handleChangeStep} /> :
                                         // Nguồn trả nợ
-                                        step === 3 ? <DebtRepaymentSource changeStep={handleChangeStep} /> :
+                                        step === 3 ? <DebtRepaymentSource step={step} changeStep={handleChangeStep} /> :
                                             // Thông tin tài sản đảm bảo
-                                            step === 4 ? <InfoCollateral changeStep={handleChangeStep} /> :
+                                            type != 1 && step === 4 ? <InfoCollateral step={step} changeStep={handleChangeStep} /> :
                                                 // Cam kết
-                                                step === 5 ? <Commitment changeStep={handleChangeStep} /> :
+                                                (type == 1 && step == 4) || (step != 1 && step === 5) ? <Commitment step={step} changeStep={handleChangeStep} /> :
                                                     null
                         }
                     </Grid>

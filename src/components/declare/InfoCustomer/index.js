@@ -87,7 +87,7 @@ const InfoCustomer = (props) => {
             vehicles: formatDataObject(values.vehicles, values.vehiclesOther),
         }
         sessionStorage.setItem('customer', JSON.stringify(infoCustomer))
-        props.changeStep(1)
+        props.changeStep(props.step + 1)
     }
 
     return (
