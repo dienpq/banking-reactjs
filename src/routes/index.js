@@ -7,6 +7,7 @@ import BankLoanOpen from "../pasges/BankLoanOpen"
 import BankLoanRegister from "../pasges/BankLoanRegister"
 import Home from "../pasges/Home"
 import PayInterest from "../pasges/PayInterest"
+import HistoryDetail from "../pasges/HistoryDetail"
 
 const router = createBrowserRouter([
     {
@@ -39,6 +40,10 @@ const router = createBrowserRouter([
             {
                 path: '/bank-loan/history',  //lịch sử
                 element: <BankLoanHistory />
+            },
+            {
+                path: '/bank-loan/history/status/contract/:id',  //Chi tiết lịch sử
+                element: <HistoryDetail />
             },
         ]
     },

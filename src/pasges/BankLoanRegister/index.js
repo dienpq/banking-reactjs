@@ -2,7 +2,6 @@ import { Container, Step, StepLabel, Stepper } from "@mui/material";
 import { useState } from "react";
 import AccountVerification from "../../components/AccountVerification";
 import InfoDeclaration from "../../components/InfoDeclaration";
-import LoanRegisterResult from "../../components/LoanRegisterResult";
 import LoanRegisterStart from "../../components/LoanRegisterStart";
 import WaitForConfirmation from "../../components/WaitForConfirmation";
 
@@ -46,7 +45,7 @@ const BankLoanRegister = () => {
                     step === 0 ? <LoanRegisterStart step={step} changeStep={handleChangeStep} /> :
                         step === 1 ? <AccountVerification step={step} changeStep={handleChangeStep} /> :
                             step === 2 ? <InfoDeclaration step={step} changeStep={handleChangeStep} /> :
-                                step === 3 ? <WaitForConfirmation step={step} changeStep={handleChangeStep} /> : <LoanRegisterResult />
+                                <WaitForConfirmation />
                 }
             </Container>
         </>
