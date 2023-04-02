@@ -8,8 +8,9 @@ import LoanPurpose from "../declare/LoanPurpose";
 import PrevUploadImage from "../PrevUploadImage";
 import InfoCollateral from "../declare/InfoCollateral";
 import Commitment from "../declare/Commitment";
+import { useParams } from "react-router-dom";
 
-const steps = [
+const stepCategories = [
     'Thông tin khách hàng',
     'Thông tin nghề nghiệp',
     'Mục đích vay vốn',
@@ -18,12 +19,19 @@ const steps = [
     'Cam kết'
 ];
 
+
 const InfoDeclaration = (props) => {
+    let steps = stepCategories;
+    const { type } = useParams();
+    if (type == 1) {
+        steps = steps.filter((step, index) => step !== 'Thông tin tài sản bảo đảm');
+    }
+
     const [step, setStep] = useState(0)
     const [statusStep, setStatusStep] = useState(false)
 
     const handleChangeStep = (status) => {
-        if (status === 6) {
+        if (status === steps.length) {
             props.changeStep(3)
         } else {
             setStep(status)

@@ -11,7 +11,6 @@ const steps = [
     'Xác thực thông tin',
     'Khai báo thông tin',
     'Chờ xác nhận',
-    'Kết quả đăng ký'
 ];
 
 const BankLoanRegister = () => {
