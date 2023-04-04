@@ -9,10 +9,14 @@ const BankLoanHistory = () => {
     const [loans, setLoans] = useState([])
 
     useEffect(() => {
+        const order = [0, 1, -1];
         axios.get("http://localhost:8080/loan/list?status=all")
             .then((response) => {
-                console.log(response.data);
-                setLoans(response.data)
+                let data = response.data
+                data.sort((a, b) => {
+                    return order.indexOf(a.contract.status) - order.indexOf(b.contract.status);
+                });
+                setLoans(data)
             })
             .catch(error => console.log(error));
     }, [])
@@ -28,7 +32,7 @@ const BankLoanHistory = () => {
                                     <CardBankLoan
                                         code={value.loan.code}
                                         price={value.loan.priceRemaining}
-                                        expiryDate="12/02/2023"
+                                        expiryDate={new Date(value.contract.createdAt).toLocaleDateString("en-US")}
                                         status={value.contract.status}
                                     />
                                 </Link>
