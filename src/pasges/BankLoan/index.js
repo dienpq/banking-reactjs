@@ -46,12 +46,14 @@ const BankLoan = () => {
                             {
                                 loans.map((value, index) => (
                                     <Grid item xs={12} key={index}>
-                                        <CardBankLoan
-                                            code={value.loan.code}
-                                            price={value.loan.priceRemaining}
-                                            expiryDate="12/02/2023"
-                                            status={value.contract.status}
-                                        />
+                                        <Link to={`/bank-loan/${value.loan.id}/pay-interest`} className='text-decoration-none'>
+                                            <CardBankLoan
+                                                code={value.loan.code}
+                                                price={value.loan.priceRemaining}
+                                                expiryDate={new Date(value.contract.createdAt).toLocaleDateString("en-US")}
+                                                status={value.contract.status}
+                                            />
+                                        </Link>
                                     </Grid>
                                 ))
                             }

@@ -2,19 +2,16 @@ import { AppBar, Avatar, Button, Container, Grid, IconButton, Menu, MenuItem, To
 import { ReactComponent as Logo } from '../../../assets/logo.svg';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Box } from '@mui/system';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import axios from 'axios';
 
 const pages = [
     {
         path: '/bank-loan',
         title: 'Khoản vay'
-    },
-    {
-        path: '/pay-interest',
-        title: 'Thanh toán'
     },
     {
         path: '/bank-loan/history',
@@ -25,7 +22,19 @@ const pages = [
 const Header = () => {
     const [anchorElUser, setAnchorElUser] = useState(null);
     const [hiddenAccountBalance, setHiddenAccountBalance] = useState(true);
-    const [accountBalance, setAccountBalance] = useState(1527000);
+    const [accountBalance, setAccountBalance] = useState(0);
+    const [user, setUser] = useState({})
+
+    const userId = 1;
+
+    useEffect(() => {
+        axios.get(`http://localhost:8080/user/${userId}`)
+            .then((response) => {
+                setUser(response.data)
+                setAccountBalance(response.data.price)
+            })
+            .catch(error => console.log(error));
+    }, [userId])
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
@@ -98,7 +107,7 @@ const Header = () => {
                                 <MenuList sx={{ width: '180px', maxWidth: '100%', padding: '0' }}>
                                     <Box padding='0.5rem 1rem'>
                                         <Typography variant='body1' fontWeight='600'>Tài khoản chính</Typography>
-                                        <Typography variant='body2' noWrap fontWeight='600' color='#9e9e9e'>222340829</Typography>
+                                        <Typography variant='body2' noWrap fontWeight='600' color='#9e9e9e'>{user.bankAccount}</Typography>
                                         <Stack direction='row' justifyContent='space-between' marginTop='4px'>
                                             <Typography variant='body1' fontWeight='600' color='#616161'>
                                                 {

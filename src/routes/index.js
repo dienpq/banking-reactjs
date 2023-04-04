@@ -34,7 +34,7 @@ const router = createBrowserRouter([
                 element: <BankLoanRegister />
             },
             {
-                path: '/pay-interest',  //trả lãi
+                path: '/bank-loan/:id/pay-interest',  //trả lãi
                 element: <PayInterest />
             },
             {
