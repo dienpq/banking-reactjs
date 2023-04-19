@@ -5,9 +5,9 @@ import * as yup from "yup";
 const validationSchema = yup.object().shape({
     collaterals: yup.array().of(
         yup.object().shape({
-            name: yup.string().required("Vui lòng nhập tên tài sản"),
-            owner: yup.string().required("Vui lòng nhập tên chủ sở hữu"),
-            relationOwnerAndCustomer: yup.string().required("Vui lòng nhập mỗi quan hệ"),
+            name: yup.string().required("Đây là trường bắt buộc"),
+            owner: yup.string().required("Đây là trường bắt buộc"),
+            relationOwnerAndCustomer: yup.string().required("Đây là trường bắt buộc"),
         })
     )
 })
@@ -73,6 +73,7 @@ const InfoCollateral = (props) => {
                                                                 <FormControl sx={{ width: '100%' }}>
                                                                     <Typography component='label'>
                                                                         Tên tài sản
+                                                                        <Typography component='span' color='#f44336'> *</Typography>
                                                                     </Typography>
                                                                     <TextField
                                                                         variant="standard"
@@ -97,6 +98,7 @@ const InfoCollateral = (props) => {
                                                                 <FormControl sx={{ width: '100%' }}>
                                                                     <Typography component='label'>
                                                                         Tên chủ sở hữu
+                                                                        <Typography component='span' color='#f44336'> *</Typography>
                                                                     </Typography>
                                                                     <TextField
                                                                         variant="standard"
@@ -121,6 +123,7 @@ const InfoCollateral = (props) => {
                                                                 <FormControl sx={{ width: '100%' }}>
                                                                     <Typography component='label'>
                                                                         Mối quan hệ của chủ sở hữu TSBĐ và khách hàng vay vốn
+                                                                        <Typography component='span' color='#f44336'> *</Typography>
                                                                     </Typography>
                                                                     <TextField
                                                                         variant="standard"

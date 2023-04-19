@@ -18,11 +18,9 @@ const Commitment = (props) => {
             "userId": 1,
             "typeLoanId": type
         }
-        console.log(loan);
 
         axios.post("http://localhost:8080/loan", loan)
             .then((response) => {
-                console.log(response.data);
                 const contract = {
                     ...customer,
                     ...job,
@@ -32,12 +30,10 @@ const Commitment = (props) => {
                 }
                 axios.post("http://localhost:8080/contract", contract)
                     .then((response) => {
-                        console.log(response.data);
                         if (type === 2) {
                             collaterals.map((collateral) => {
                                 axios.post("http://localhost:8080/collateral", { ...collateral, contractId: response.data.id })
                                     .then((response) => {
-                                        console.log(response.data);
                                     })
                                     .catch(error => console.log(error));
                             })

@@ -24,10 +24,10 @@ const InfoDeclaration = (props) => {
     let steps = stepCategories;
     const { type } = useParams();
     if (type == 1) {
-        steps = steps.filter((step, index) => step !== 'Thông tin tài sản bảo đảm');
+        steps = steps.filter((step) => step !== 'Thông tin tài sản bảo đảm');
     }
 
-    const [step, setStep] = useState(0)
+    const [step, setStep] = useState(2)
     const [statusStep, setStatusStep] = useState(false)
 
     const handleChangeStep = (status) => {

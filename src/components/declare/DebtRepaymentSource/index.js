@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import * as yup from "yup";
 
 const validationSchema = yup.object().shape({
-    wage: yup.string().required("Vui lòng nhập lương và các khoản phụ cấp"),
+    wage: yup.string().required("Đây là trường bắt buộc"),
 })
 const DebtRepaymentSource = (props) => {
     const initialValues = {
@@ -58,6 +58,7 @@ const DebtRepaymentSource = (props) => {
                                                 <FormControl sx={{ width: '100%' }}>
                                                     <Typography component='label'>
                                                         Lương và các khoản phụ cấp
+                                                        <Typography component='span' color='#f44336'> *</Typography>
                                                     </Typography>
                                                     <TextField
                                                         variant="standard"

@@ -5,23 +5,27 @@ import { formatDataObject } from "../../../common";
 import { checkBoxRequired } from "../../../yupUtils";
 
 const validationSchema = yup.object().shape({
-    nameCompany: yup.string().required("Tên công ty là trường bắt buộc"),
-    phoneCompany: yup.string().required("Điện thoại cơ quan là trường bắt buộc"),
-    addressCompany: yup.string().required("Địa chỉ công ty / cơ quan là trường bắt buộc"),
-    job: checkBoxRequired("Cộng việc phải chọn ít nhất một ô"),
+    nameCompany: yup.string(),
+    phoneCompany: yup.string().when("nameCompany", (applyValidation, schema) => {
+        return applyValidation[0] ? schema.required('Đây là trường bắt buộc') : schema;
+    }),
+    addressCompany: yup.string().when("nameCompany", (applyValidation, schema) => {
+        return applyValidation[0] ? schema.required('Đây là trường bắt buộc') : schema;
+    }),
+    job: checkBoxRequired("Vui lòng chọn ít nhất một ô"),
     jobOther: yup.string().when("job", (applyValidation, schema) => {
         if (applyValidation[0].other)
-            return schema.required("Vui lòng nhập công việc khác")
+            return schema.required("Đây là trường bắt buộc")
     }),
-    typeContractJob: checkBoxRequired("Hình thức làm việc phải chọn ít nhất một ô"),
+    typeContractJob: checkBoxRequired("Vui lòng chọn ít nhất một ô"),
     typeContractJobOther: yup.string().when("typeContractJob", (applyValidation, schema) => {
         if (applyValidation[0].other)
-            return schema.required("Vui lòng nhập hình thức làm việc khác")
+            return schema.required("Đây là trường bắt buộc")
     }),
-    typeReceiveWage: checkBoxRequired("Hình thức nhận lương phải chọn ít nhất một ô"),
+    typeReceiveWage: checkBoxRequired("Vui lòng chọn ít nhất một ô"),
     typeReceiveWageOther: yup.string().when("typeReceiveWage", (applyValidation, schema) => {
         if (applyValidation[0].other)
-            return schema.required("Vui lòng nhập hình thức nhận lương khác")
+            return schema.required("Đây là trường bắt buộc")
     }),
 })
 
@@ -87,12 +91,34 @@ const InfoJob = (props) => {
                         <Form>
                             <Box padding='1rem'>
                                 <Grid container spacing={2}>
+                                    {/* Nghề nghiệp */}
+                                    <Grid item xs={12}>
+                                        <FormControl sx={{ width: '100%' }}>
+                                            <Typography component='label'>
+                                                Nghề nghiệp
+                                                <Typography component='span' color='#f44336'> *</Typography>
+                                            </Typography>
+                                            <FormGroup>
+                                                {
+                                                    Object.keys(values.job).map((key) => (
+                                                        <FormControlLabel
+                                                            key={key}
+                                                            control={<Checkbox name={`job.${key}`} checked={values.job[key]} onChange={handleChange} />}
+                                                            label={key === 'other' ? 'Khác (Ghi rõ)' : key}
+                                                        />
+                                                    ))
+                                                }
+                                            </FormGroup>
+                                            <FormHelperText error sx={{ margin: 0, marginTop: '4px' }} >
+                                                {errors.job && touched.job && errors.job}
+                                            </FormHelperText>
+                                        </FormControl>
+                                    </Grid>
                                     {/* Tên công ty */}
                                     <Grid item xs={6}>
                                         <FormControl sx={{ width: '100%' }}>
                                             <Typography component='label'>
                                                 Tên công ty
-                                                <Typography component='span' color='#f44336'> *</Typography>
                                             </Typography>
                                             <TextField
                                                 variant="standard"
@@ -117,7 +143,6 @@ const InfoJob = (props) => {
                                         <FormControl sx={{ width: '100%' }}>
                                             <Typography component='label'>
                                                 Điện thoại cơ quan
-                                                <Typography component='span' color='#f44336'> *</Typography>
                                             </Typography>
                                             <TextField
                                                 variant="standard"
@@ -142,7 +167,6 @@ const InfoJob = (props) => {
                                         <FormControl sx={{ width: '100%' }}>
                                             <Typography component='label'>
                                                 Địa chỉ công ty / cơ quan
-                                                <Typography component='span' color='#f44336'> *</Typography>
                                             </Typography>
                                             <TextField
                                                 variant="standard"
@@ -160,29 +184,6 @@ const InfoJob = (props) => {
                                                     }
                                                 }}
                                             />
-                                        </FormControl>
-                                    </Grid>
-                                    {/* Nghề nghiệp */}
-                                    <Grid item xs={12}>
-                                        <FormControl sx={{ width: '100%' }}>
-                                            <Typography component='label'>
-                                                Nghề nghiệp
-                                                <Typography component='span' color='#f44336'> *</Typography>
-                                            </Typography>
-                                            <FormGroup>
-                                                {
-                                                    Object.keys(values.job).map((key) => (
-                                                        <FormControlLabel
-                                                            key={key}
-                                                            control={<Checkbox name={`job.${key}`} checked={values.job[key]} onChange={handleChange} />}
-                                                            label={key === 'other' ? 'Khác (Ghi rõ)' : key}
-                                                        />
-                                                    ))
-                                                }
-                                            </FormGroup>
-                                            <FormHelperText error sx={{ margin: 0, marginTop: '4px' }} >
-                                                {errors.job && touched.job && errors.job}
-                                            </FormHelperText>
                                         </FormControl>
                                     </Grid>
                                     {

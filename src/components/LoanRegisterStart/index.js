@@ -3,9 +3,9 @@ import { Form, Formik } from "formik";
 import * as yup from "yup";
 
 const validationSchema = yup.object().shape({
-    email: yup.string().required("Email là trường bắt buộc").email("Email không hợp lệ"),
-    phone: yup.string().required("Số điện thoại là trường bắt buộc"),
-    fullname: yup.string().required("Họ và tên là trường bắt buộc"),
+    email: yup.string().required("Đây là trường bắt buộc").email("Email không hợp lệ"),
+    phone: yup.string().required("Đây là trường bắt buộc"),
+    fullname: yup.string().required("Đây là trường bắt buộc"),
 });
 
 const LoanRegisterStart = (props) => {

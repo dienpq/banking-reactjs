@@ -7,32 +7,32 @@ import { formatDataObject } from "../../../common.js";
 import { checkBoxRequired } from "../../../yupUtils.js";
 
 const validationSchema = yup.object().shape({
-    fullname: yup.string().required("Họ và tên là trường bắt buộc"),
-    birthday: yup.string().required("Ngày cấp là trường bắt buộc"),
-    idNumber: yup.string().required("Số CCCD/CMND/Hộ chiếu là trường bắt buộc"),
-    issuedDate: yup.string().required("Ngày cấp là trường bắt buộc"),
-    issuedPlace: yup.string().required("Nơi cấp là trường bắt buộc"),
-    permanentAddress: yup.string().required("Hộ khẩu thương trú là trường bắt buộc"),
-    currentResidence: yup.string().required("Nơi ở hiện tại là trường bắt buộc"),
-    phone: yup.string().required("Số điện thoại là trường bắt buộc"),
-    email: yup.string().required("Email là trường bắt buộc"),
+    fullname: yup.string().required("Đây là trường bắt buộc"),
+    birthday: yup.string().required("Đây là trường bắt buộc"),
+    idNumber: yup.string().required("Đây là trường bắt buộc"),
+    issuedDate: yup.string().required("Đây là trường bắt buộc"),
+    issuedPlace: yup.string().required("Đây là trường bắt buộc"),
+    permanentAddress: yup.string().required("Đây là trường bắt buộc"),
+    currentResidence: yup.string().required("Đây là trường bắt buộc"),
+    phone: yup.string().required("Đây là trường bắt buộc"),
+    email: yup.string().required("Đây là trường bắt buộc"),
     maritalOther: yup.string().when("marital", (applyValidation, schema) => {
         if (applyValidation[0] === "other")
-            return schema.required('Tình trạng hôn nhân là trường bắt buộc')
+            return schema.required('Đây là trường bắt buộc')
     }),
     academicLevelOther: yup.string().when("academicLevel", (applyValidation, schema) => {
         if (applyValidation[0] === "other")
-            return schema.required('Trình độ học vấn là trường bắt buộc')
+            return schema.required('Đây là trường bắt buộc')
     }),
-    homeOwnership: checkBoxRequired("Hình thức sở hữu nhà ở phải chọn ít nhất một ô"),
+    homeOwnership: checkBoxRequired("Vui lòng chọn ít nhất một ô"),
     homeOwnershipOther: yup.string().when("homeOwnership", (applyValidation, schema) => {
         if (applyValidation[0].other)
-            return schema.required('Hình thức sở hữu nhà ở là trường bắt buộc')
+            return schema.required('Đây là trường bắt buộc')
     }),
-    vehicles: checkBoxRequired("Phương tiện đi lại phải chọn ít nhất một ô"),
+    vehicles: checkBoxRequired("Vui lòng chọn ít nhất một ô"),
     vehiclesOther: yup.string().when("vehicles", (applyValidation, schema) => {
         if (applyValidation[0].other)
-            return schema.required('Phương tiện đi lại ở là trường bắt buộc')
+            return schema.required('Đây là trường bắt buộc')
     }),
 });
 

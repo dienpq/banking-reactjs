@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom';
 import * as yup from "yup";
 
 const validationSchema = yup.object().shape({
-    price: yup.string().required("Vui lòng nhập số tiền cần trả"),
+    price: yup.string().required("Đây là trường bắt buộc"),
 });
 
 const PayInterest = () => {

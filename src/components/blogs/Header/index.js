@@ -50,18 +50,7 @@ const Header = () => {
             <Container maxWidth='xl'>
                 <Grid container spacing={2}>
                     <Grid item xs={5}>
-                        <Stack direction='row' alignItems='center'>
-                            <Toolbar>
-                                <IconButton
-                                    size="large"
-                                    edge="start"
-                                    color="default"
-                                    aria-label="menu"
-                                    sx={{ mr: 0 }}
-                                >
-                                    <MenuIcon />
-                                </IconButton>
-                            </Toolbar>
+                        <Stack direction='row' alignItems='center' height='100%'>
                             <Link to='/'>
                                 <Logo width='160px' />
                             </Link>
@@ -169,18 +158,18 @@ const Header = () => {
                             display='inline-block'
                             paddingLeft='100%'
                             sx={{
-                                animation: 'marquee 15s linear infinite',
+                                animation: 'marquee 30s linear infinite',
                                 '@keyframes marquee': {
                                     '0%': {
-                                        transform: 'translate(-100%, 0)'
+                                        transform: 'translate(0%, 0)'
                                     },
                                     '100%': {
-                                        transform: 'translate(0, 0)'
+                                        transform: 'translate(-100%, 0)'
                                     }
                                 }
                             }}
                         >
-                            jagsdkjahgdkjashgdkjshgdkjahgdajhsgdkashjgdkjh
+                            VPBank cung cấp một loạt các sản phẩm và dịch vụ tài chính cho các khách hàng cá nhân và doanh nghiệp, bao gồm tín dụng cá nhân, tín dụng doanh nghiệp, thẻ tín dụng, tiền gửi, bảo hiểm, đầu tư và các sản phẩm khác. Ngoài ra, VPBank cũng có một chương trình ưu đãi cho các khách hàng thanh toán bằng thẻ tín dụng của ngân hàng này.
                         </Typography>
                     </Box>
                 </Container>

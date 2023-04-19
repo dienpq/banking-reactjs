@@ -1,24 +1,12 @@
-import { Box, Button, Checkbox, FormControl, FormControlLabel, FormGroup, FormHelperText, Grid, Paper, Stack, TextField, Typography } from "@mui/material";
+import { Box, Button, Checkbox, FormControl, FormControlLabel, FormGroup, FormHelperText, Grid, MenuItem, Paper, Radio, RadioGroup, Select, Stack, TextField, Typography } from "@mui/material";
 import { Form, Formik } from "formik";
 import React from "react";
 import * as yup from "yup";
 import { formatDataObject } from "../../../common";
 import { checkBoxRequired } from "../../../yupUtils";
 
-yup.addMethod(yup.object, "checkBoxRequiredCustom", function (errorMessage) {
-  return this.test(`test-check-type`, errorMessage, function (obj) {
-    const { path, createError } = this;
-
-    return (
-      Object.values(obj).some(value => value.index === true) ||
-      createError({ path, message: errorMessage })
-    );
-  });
-});
-
 const validationSchema = yup.object().shape({
   loanPurpose: yup.object()
-    .checkBoxRequiredCustom("Vui lòng nhập ít nhất một ô")
     .shape({
       "Vay mua ô tô": yup.object().shape({
         purpose: yup.object().when("index", (applyValidation) => {
@@ -28,7 +16,7 @@ const validationSchema = yup.object().shape({
         description: yup.object().when("index", (applyValidation) => {
           if (applyValidation[0])
             return yup.object().shape({
-              content: yup.string().required("Vui lòng nhập thông tin chủng loại xe")
+              content: yup.string().required("Đây là trường bắt buộc")
             })
         }),
       }),
@@ -40,7 +28,7 @@ const validationSchema = yup.object().shape({
         description: yup.object().when("index", (applyValidation) => {
           if (applyValidation[0])
             return yup.object().shape({
-              content: yup.string().required("Vui lòng nhập thông tin chi tiết mục đích vay")
+              content: yup.string().required("Đây là trường bắt buộc")
             })
         }),
       }),
@@ -55,7 +43,7 @@ const validationSchema = yup.object().shape({
               option: checkBoxRequired("Vui lòng chọn ít nhất một ô"),
               optionOther: yup.string().when("option", (apply) => {
                 if (apply[0].other)
-                  return yup.string().required("Vui lòng nhập thông tin khác")
+                  return yup.string().required("Đây là trường bắt buộc")
               })
             })
         }),
@@ -77,12 +65,12 @@ const validationSchema = yup.object().shape({
         }),
         purposeOther: yup.string().when("purpose", (apply) => {
           if (apply[0].other)
-            return yup.string().required("Vui lòng nhập mục đích khác")
+            return yup.string().required("Đây là trường bắt buộc")
         }),
         description: yup.object().when("index", (applyValidation) => {
           if (applyValidation[0])
             return yup.object().shape({
-              content: yup.string().required("Vui lòng nhập địa chỉ")
+              content: yup.string().required("Đây là trường bắt buộc")
             })
         }),
       }),
@@ -93,19 +81,20 @@ const validationSchema = yup.object().shape({
         })
       })
     }),
-  priceLoan: yup.string().required("Vui lòng nhập số tiền cần vay"),
-  timeLoan: yup.string().required("Vui lòng nhập thời hạn vay"),
+  priceLoan: yup.string().required("Đây là trường bắt buộc"),
+  timeLoan: yup.string().required("Đây là trường bắt buộc"),
   // timeLoanCurrent: yup.string().required("Vui lòng nhật số tiền cần vay"),// Vaidate số
   debtPaymentMethod: checkBoxRequired("Vui lòng chọn ít nhất một ô"),
   debtPaymentMethodOther: yup.string().when("debtPaymentMethod", (applyValidation, schema) => {
     if (applyValidation[0].other)
-      return schema.required('Vui lòng nhập phương thức trả nợ khác')
+      return schema.required('Đây là trường bắt buộc')
   }),
 })
 
 
 const LoanPurpose = (props) => {
   const initialValues = {
+    selectLoanPurpose: "other",
     loanPurpose: {
       "Vay mua ô tô": {
         index: false,
@@ -171,12 +160,12 @@ const LoanPurpose = (props) => {
         },
       },
       "other": {
-        index: false,
+        index: true,
         content: ""
       },
     },
     priceLoan: "",
-    timeLoan: "",
+    timeLoan: "3",
     timeLoanCurrent: "",
     debtPaymentMethod: {
       "Trả gốc đều hàng tháng, lãi trả hàng tháng": false,
@@ -237,14 +226,21 @@ const LoanPurpose = (props) => {
           validationSchema={validationSchema}
           onSubmit={onSubmit}
         >
-          {({ values, touched, errors, handleChange, handleBlur }) => (
+          {({ values, touched, errors, handleChange, handleBlur, setFieldValue }) => (
             <Form>
               <Box padding='1rem'>
                 <Grid container spacing={2}>
                   {/* Mục đích */}
                   <Grid item xs={12}>
                     <FormControl sx={{ width: '100%' }}>
-                      <FormGroup>
+                      <RadioGroup
+                        name="selectLoanPurpose"
+                        defaultValue='other'
+                        onChange={(event) => {
+                          handleChange(event)
+                          setFieldValue(`loanPurpose.${event.target.value}.index`, true)
+                        }}
+                      >
                         {
                           Object.keys(values.loanPurpose).map((key) => (
                             <React.Fragment key={key}>
@@ -252,19 +248,23 @@ const LoanPurpose = (props) => {
                                 key !== "other" ?
                                   <>
                                     <FormControlLabel
-                                      key={key}
                                       label={key}
-                                      value={values.loanPurpose[key].index}
-                                      control={<Checkbox
-                                        name={`loanPurpose.${key}.index`}
-                                        checked={values.loanPurpose[key].index}
-                                        onChange={handleChange} />}
+                                      value={key}
+                                      control={<Radio />}
+                                      onChange={() => {
+                                        Object.keys(values.loanPurpose).map((keySub) => {
+                                          setFieldValue(`loanPurpose.${keySub}.index`, false)
+                                        })
+                                      }}
                                     />
                                     {
-                                      values.loanPurpose[key].index ? <Box>
+                                      key === values.selectLoanPurpose ? <Box>
                                         <Typography component='ul'>
                                           <Typography component='li' key="purpose">
-                                            <Typography>Mục đích</Typography>
+                                            <Typography>
+                                              Mục đích
+                                              <Typography component='span' color='#f44336'> *</Typography>
+                                            </Typography>
                                             <FormGroup>
                                               {
                                                 Object.keys(values.loanPurpose[key].purpose).map((keySub) => (
@@ -302,7 +302,10 @@ const LoanPurpose = (props) => {
                                           {
                                             "type" in values.loanPurpose[key] ?
                                               <Typography component='li' key="type">
-                                                <Typography>{values.loanPurpose[key].type.title}</Typography>
+                                                <Typography>
+                                                  {values.loanPurpose[key].type.title}
+                                                  <Typography component='span' color='#f44336'> *</Typography>
+                                                </Typography>
                                                 <FormGroup>
                                                   {
                                                     Object.keys(values.loanPurpose[key].type.option).map((keyOption) => (
@@ -347,7 +350,10 @@ const LoanPurpose = (props) => {
                                           }
 
                                           <Typography component='li' key="description">
-                                            <Typography>{values.loanPurpose[key].description.title}</Typography>
+                                            <Typography>
+                                              {values.loanPurpose[key].description.title}
+                                              <Typography component='span' color='#f44336'> *</Typography>
+                                            </Typography>
                                             <FormControl sx={{ width: '100%' }}>
                                               <TextField
                                                 variant="standard"
@@ -375,11 +381,17 @@ const LoanPurpose = (props) => {
                                   <>
                                     <FormControlLabel
                                       key={key}
-                                      control={<Checkbox name="loanPurpose.other.index" checked={values.loanPurpose[key].index} onChange={handleChange} />}
+                                      value='other'
+                                      control={<Radio />}
                                       label="Vay khác"
+                                      onChange={() => {
+                                        Object.keys(values.loanPurpose).map((keySub) => {
+                                          setFieldValue(`loanPurpose.${keySub}.index`, false)
+                                        })
+                                      }}
                                     />
                                     {
-                                      values.loanPurpose.other.index ?
+                                      values.selectLoanPurpose === 'other' ?
                                         <FormControl sx={{ width: '100%' }}>
                                           <TextField
                                             multiline
@@ -407,7 +419,8 @@ const LoanPurpose = (props) => {
                             </React.Fragment>
                           ))
                         }
-                      </FormGroup>
+                      </RadioGroup>
+
                       {!Object.keys(values.loanPurpose).some((key) => !!errors.loanPurpose?.[key]) && (
                         <FormHelperText error sx={{ margin: 0, marginTop: '4px' }} >
                           {errors.loanPurpose && touched.loanPurpose && errors.loanPurpose}
@@ -417,7 +430,10 @@ const LoanPurpose = (props) => {
                   </Grid>
                   {/* Số tiền vay */}
                   <Grid item xs={6}>
-                    <Typography>Số tiền vay</Typography>
+                    <Typography>
+                      Số tiền vay
+                      <Typography component='span' color='#f44336'> *</Typography>
+                    </Typography>
                     <FormControl sx={{ width: '100%' }}>
                       <TextField
                         variant="standard"
@@ -439,24 +455,22 @@ const LoanPurpose = (props) => {
                   </Grid>
                   {/* Thời hạn vay */}
                   <Grid item xs={6}>
-                    <Typography>Thời hạn vay (tháng)</Typography>
-                    <FormControl sx={{ width: '100%' }}>
+                    <Typography>
+                      Thời hạn vay (tháng)
+                      <Typography component='span' color='#f44336'> *</Typography>
+                    </Typography>
+                    <FormControl variant="outlined" sx={{ width: '100%' }}>
                       <TextField
+                        select
                         variant="standard"
-                        placeholder="Số tháng"
+                        id="select-time-loan"
                         name="timeLoan"
                         value={values.timeLoan}
                         onChange={handleChange}
-                        onBlur={handleBlur}
-                        error={touched.timeLoan && Boolean(errors.timeLoan)}
-                        helperText={touched.timeLoan && errors.timeLoan}
-                        sx={{
-                          '& .css-1wc848c-MuiFormHelperText-root': {
-                            margin: 0,
-                            marginTop: '4px'
-                          }
-                        }}
-                      />
+                      >
+                        <MenuItem value='3'>3</MenuItem>
+                        <MenuItem value='6'>6</MenuItem>
+                      </TextField>
                     </FormControl>
                   </Grid>
                   {/* Ân hạn gốc */}
@@ -482,7 +496,9 @@ const LoanPurpose = (props) => {
                   </Grid>
                   {/* Phương thức giải ngân */}
                   <Grid item xs={6}>
-                    <Typography>Phương thức giải ngân</Typography>
+                    <Typography>
+                      Phương thức giải ngân
+                    </Typography>
                     <FormControl sx={{ width: '100%' }}>
                       <TextField
                         variant="standard"
