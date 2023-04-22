@@ -44,6 +44,7 @@ const Commitment = (props) => {
             })
             .catch(error => console.log(error));
 
+        sessionStorage.clear();
     }
     return (
         <>

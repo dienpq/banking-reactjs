@@ -1,9 +1,11 @@
 import { Box, Button, Checkbox, FormControl, FormControlLabel, FormGroup, FormHelperText, Grid, MenuItem, Paper, Radio, RadioGroup, Select, Stack, TextField, Typography } from "@mui/material";
 import { Form, Formik } from "formik";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import * as yup from "yup";
 import { formatDataObject } from "../../../common";
 import { checkBoxRequired } from "../../../yupUtils";
+import axios from "axios";
+import { useParams } from "react-router-dom";
 
 const validationSchema = yup.object().shape({
   loanPurpose: yup.object()
@@ -83,7 +85,6 @@ const validationSchema = yup.object().shape({
     }),
   priceLoan: yup.string().required("Đây là trường bắt buộc"),
   timeLoan: yup.string().required("Đây là trường bắt buộc"),
-  // timeLoanCurrent: yup.string().required("Vui lòng nhật số tiền cần vay"),// Vaidate số
   debtPaymentMethod: checkBoxRequired("Vui lòng chọn ít nhất một ô"),
   debtPaymentMethodOther: yup.string().when("debtPaymentMethod", (applyValidation, schema) => {
     if (applyValidation[0].other)
@@ -91,8 +92,18 @@ const validationSchema = yup.object().shape({
   }),
 })
 
-
 const LoanPurpose = (props) => {
+  const { type } = useParams();
+  const [expiryDate, setExpiryDate] = useState([]);
+
+  useEffect(() => {
+    axios.get(`http://localhost:8080/type-loan/${type}/expiry-date`)
+      .then((response) => {
+        setExpiryDate(response.data)
+      })
+      .catch(error => console.log(error));
+  }, [])
+
   const loanPurposeInit = JSON.parse(sessionStorage.getItem("loanPurposeInit"))
   let initialValues = {}
   if (loanPurposeInit) {
@@ -170,8 +181,7 @@ const LoanPurpose = (props) => {
         },
       },
       priceLoan: "",
-      timeLoan: "3",
-      timeLoanCurrent: "",
+      timeLoan: expiryDate.length > 0 ? expiryDate[0].amountMonth + '|' + expiryDate[0].interest : "",
       debtPaymentMethod: {
         "Trả gốc đều hàng tháng, lãi trả hàng tháng": false,
         "Trả gốc, lãi đều hàng tháng (Niên kim)": false,
@@ -210,11 +220,13 @@ const LoanPurpose = (props) => {
     })
     loanPurpose = loanPurpose.slice(0, -2)
 
+    const timeLoan = values.timeLoan.split("|")
+
     const loanPurposeInfo = {
       loanPurpose: loanPurpose,
       priceLoan: values.priceLoan,
-      timeLoan: values.timeLoan,
-      timeLoanCurrent: values.timeLoanCurrent,
+      timeLoan: parseInt(timeLoan[0]),
+      interestLoan: parseFloat(timeLoan[1]),
       debtPaymentMethod: formatDataObject(values.debtPaymentMethod, values.debtPaymentMethodOther),
       otherSuggestions: values.otherSuggestions,
     }
@@ -476,34 +488,14 @@ const LoanPurpose = (props) => {
                         value={values.timeLoan}
                         onChange={handleChange}
                       >
-                        <MenuItem value='3'>3</MenuItem>
-                        <MenuItem value='6'>6</MenuItem>
+                        {expiryDate.map((item, index) => (
+                          <MenuItem key={index} value={`${item.amountMonth}|${item.interest}`}>{item.amountMonth} ({item.interest}%)</MenuItem>
+                        ))}
                       </TextField>
                     </FormControl>
                   </Grid>
-                  {/* Ân hạn gốc */}
-                  <Grid item xs={6}>
-                    <Typography>Ân hạn gốc (tháng)</Typography>
-                    <FormControl sx={{ width: '100%' }}>
-                      <TextField
-                        variant="standard"
-                        placeholder="Số tháng"
-                        name="timeLoanCurrent"
-                        value={values.timeLoanCurrent}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        error={touched.timeLoanCurrent && Boolean(errors.timeLoanCurrent)}
-                        sx={{
-                          '& .css-1wc848c-MuiFormHelperText-root': {
-                            margin: 0,
-                            marginTop: '4px'
-                          }
-                        }}
-                      />
-                    </FormControl>
-                  </Grid>
                   {/* Phương thức giải ngân */}
-                  <Grid item xs={6}>
+                  <Grid item xs={12}>
                     <Typography>
                       Phương thức giải ngân
                     </Typography>
@@ -511,7 +503,7 @@ const LoanPurpose = (props) => {
                       <TextField
                         variant="standard"
                         disabled
-                        value='Theo quy định của ngân hang VPBank'
+                        value='Theo quy định của ngân hàng VPBank'
                       />
                     </FormControl>
                   </Grid>

@@ -19,7 +19,6 @@ const stepCategories = [
     'Cam kết'
 ];
 
-
 const InfoDeclaration = (props) => {
     let steps = stepCategories;
     const { type } = useParams();
