@@ -30,40 +30,47 @@ const validationSchema = yup.object().shape({
 })
 
 const InfoJob = (props) => {
-    const initialValues = {
-        "nameCompany": "",
-        "phoneCompany": "",
-        "addressCompany": "",
-        "job": {
-            "Cán bộ cấp quản lý": false,
-            "Cán bộ cấp chuyên viên/nhân viên": false,
-            "Lực lượng vũ trang": false,
-            "Kinh doanh có đăng ký (KDCT)": false,
-            "Nghỉ hưu": false,
-            "Kinh doanh tự do/lao động thời vụ": false,
-            "Thất nghiệp/không có việc làm": false,
-            "other": false,
-        },
-        "jobOther": "",
-        "typeContractJob": {
-            "Có thời hạn": false,
-            "Không thời hạn": false,
-            "Tự do": false,
-            "Toàn thời gian": false,
-            "Bán thời gian": false,
-            "Nghỉ hưu": false,
-            "other": false,
-        },
-        "typeContractJobOther": "",
-        "typeReceiveWage": {
-            "Tiền mặt": false,
-            "Ngân hàng VPBank": false,
-            "other": false,
-        },
-        "typeReceiveWageOther": "",
+    const jobInit = JSON.parse(sessionStorage.getItem("jobInit"))
+    let initialValues = {}
+    if (jobInit) {
+        initialValues = jobInit
+    } else {
+        initialValues = {
+            "nameCompany": "",
+            "phoneCompany": "",
+            "addressCompany": "",
+            "job": {
+                "Cán bộ cấp quản lý": false,
+                "Cán bộ cấp chuyên viên/nhân viên": false,
+                "Lực lượng vũ trang": false,
+                "Kinh doanh có đăng ký (KDCT)": false,
+                "Nghỉ hưu": false,
+                "Kinh doanh tự do/lao động thời vụ": false,
+                "Thất nghiệp/không có việc làm": false,
+                "other": false,
+            },
+            "jobOther": "",
+            "typeContractJob": {
+                "Có thời hạn": false,
+                "Không thời hạn": false,
+                "Tự do": false,
+                "Toàn thời gian": false,
+                "Bán thời gian": false,
+                "Nghỉ hưu": false,
+                "other": false,
+            },
+            "typeContractJobOther": "",
+            "typeReceiveWage": {
+                "Tiền mặt": false,
+                "Ngân hàng VPBank": false,
+                "other": false,
+            },
+            "typeReceiveWageOther": "",
+        }
     }
 
     const onSubmit = (values) => {
+        sessionStorage.setItem('jobInit', JSON.stringify(values))
         const jobInfo = {
             nameCompany: values.nameCompany,
             phoneCompany: values.phoneCompany,
@@ -84,6 +91,7 @@ const InfoJob = (props) => {
                 </Box>
                 <Formik
                     initialValues={initialValues}
+                    enableReinitialize={true}
                     validationSchema={validationSchema}
                     onSubmit={onSubmit}
                 >
@@ -114,6 +122,28 @@ const InfoJob = (props) => {
                                             </FormHelperText>
                                         </FormControl>
                                     </Grid>
+                                    {
+                                        values.job.other ? <Grid item xs={12}>
+                                            <FormControl sx={{ width: '100%' }}>
+                                                <TextField
+                                                    variant="standard"
+                                                    placeholder="Ghi rõ nghề nghiệp hiện tại"
+                                                    name="jobOther"
+                                                    value={values.jobOther}
+                                                    onChange={handleChange}
+                                                    onBlur={handleBlur}
+                                                    error={touched.jobOther && Boolean(errors.jobOther)}
+                                                    helperText={touched.jobOther && errors.jobOther}
+                                                    sx={{
+                                                        '& .css-1wc848c-MuiFormHelperText-root': {
+                                                            margin: 0,
+                                                            marginTop: '4px'
+                                                        }
+                                                    }}
+                                                />
+                                            </FormControl>
+                                        </Grid> : null
+                                    }
                                     {/* Tên công ty */}
                                     <Grid item xs={6}>
                                         <FormControl sx={{ width: '100%' }}>
@@ -186,28 +216,6 @@ const InfoJob = (props) => {
                                             />
                                         </FormControl>
                                     </Grid>
-                                    {
-                                        values.job.other ? <Grid item xs={12}>
-                                            <FormControl sx={{ width: '100%' }}>
-                                                <TextField
-                                                    variant="standard"
-                                                    placeholder="Ghi rõ nghề nghiệp hiện tại"
-                                                    name="jobOther"
-                                                    value={values.jobOther}
-                                                    onChange={handleChange}
-                                                    onBlur={handleBlur}
-                                                    error={touched.jobOther && Boolean(errors.jobOther)}
-                                                    helperText={touched.jobOther && errors.jobOther}
-                                                    sx={{
-                                                        '& .css-1wc848c-MuiFormHelperText-root': {
-                                                            margin: 0,
-                                                            marginTop: '4px'
-                                                        }
-                                                    }}
-                                                />
-                                            </FormControl>
-                                        </Grid> : null
-                                    }
                                     {/* Loại hình hợp đồng lao động */}
                                     <Grid item xs={12}>
                                         <FormControl sx={{ width: '100%' }}>

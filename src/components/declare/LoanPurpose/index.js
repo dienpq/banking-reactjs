@@ -93,92 +93,99 @@ const validationSchema = yup.object().shape({
 
 
 const LoanPurpose = (props) => {
-  const initialValues = {
-    selectLoanPurpose: "other",
-    loanPurpose: {
-      "Vay mua ô tô": {
-        index: false,
-        purpose: {
-          "Mua xe ô tô mới": false,
-          "Mua xe ô tô đã qua sử dụng": false,
-          "Hoàn vốn / Bù đắp mua xe ô tô": false,
+  const loanPurposeInit = JSON.parse(sessionStorage.getItem("loanPurposeInit"))
+  let initialValues = {}
+  if (loanPurposeInit) {
+    initialValues = loanPurposeInit
+  } else {
+    initialValues = {
+      selectLoanPurpose: "other",
+      loanPurpose: {
+        "Vay mua ô tô": {
+          index: false,
+          purpose: {
+            "Mua xe ô tô mới": false,
+            "Mua xe ô tô đã qua sử dụng": false,
+            "Hoàn vốn / Bù đắp mua xe ô tô": false,
+          },
+          description: {
+            title: "Tên chủng loại xe (hiệu xe - dòng xe - năm sản xuất)",
+            content: ""
+          },
         },
-        description: {
-          title: "Tên chủng loại xe (hiệu xe - dòng xe - năm sản xuất)",
-          content: ""
+        "Vay phục vụ hoạt động sản xuất kinh doanh": {
+          index: false,
+          purpose: {
+            "Vay đầu tư TSCĐ": false,
+            "Vay bổ sung vốn / mở rộng / phát triển kinh doanh": false,
+            "Vay bổ sung vốn lưu động theo hạn mức": false,
+            "Vay thấu chi Tài khoản thanh toán HKD": false,
+          },
+          description: {
+            title: "Ghi chi tiết cụ thể mục đích vay",
+            content: ""
+          },
         },
-      },
-      "Vay phục vụ hoạt động sản xuất kinh doanh": {
-        index: false,
-        purpose: {
-          "Vay đầu tư TSCĐ": false,
-          "Vay bổ sung vốn / mở rộng / phát triển kinh doanh": false,
-          "Vay bổ sung vốn lưu động theo hạn mức": false,
-          "Vay thấu chi Tài khoản thanh toán HKD": false,
-        },
-        description: {
-          title: "Ghi chi tiết cụ thể mục đích vay",
-          content: ""
-        },
-      },
-      "Vay mua bất động sản": {
-        index: false,
-        purpose: {
-          "Để sử dụng": false,
-          "Để kinh doanh": false,
-          "other": false,
-        },
-        purposeOther: "",
-        type: {
-          title: "Loại BĐS",
-          option: {
-            "Chung cư": false,
-            "Nhà đất": false,
-            "Đất": false,
-            "BĐS chưa có giấy tờ chứng minh quyền sở hữu, sử dụng": false,
-            "BĐS có giấy tờ chứng minh quyền sở hữu, sử dụng": false,
+        "Vay mua bất động sản": {
+          index: false,
+          purpose: {
+            "Để sử dụng": false,
+            "Để kinh doanh": false,
             "other": false,
           },
-          optionOther: "",
+          purposeOther: "",
+          type: {
+            title: "Loại BĐS",
+            option: {
+              "Chung cư": false,
+              "Nhà đất": false,
+              "Đất": false,
+              "BĐS chưa có giấy tờ chứng minh quyền sở hữu, sử dụng": false,
+              "BĐS có giấy tờ chứng minh quyền sở hữu, sử dụng": false,
+              "other": false,
+            },
+            optionOther: "",
+          },
+          description: {
+            title: "Ghi chi tiết cụ thể mục đích vay",
+            content: ""
+          },
         },
-        description: {
-          title: "Ghi chi tiết cụ thể mục đích vay",
+        "Vay xây nhà / sửa nhà": {
+          index: false,
+          purpose: {
+            "Để sử dụng": false,
+            "Để kinh doanh": false,
+            "other": false,
+          },
+          purposeOther: "",
+          description: {
+            title: "Địa chỉ",
+            content: ""
+          },
+        },
+        "other": {
+          index: true,
           content: ""
         },
       },
-      "Vay xây nhà / sửa nhà": {
-        index: false,
-        purpose: {
-          "Để sử dụng": false,
-          "Để kinh doanh": false,
-          "other": false,
-        },
-        purposeOther: "",
-        description: {
-          title: "Địa chỉ",
-          content: ""
-        },
+      priceLoan: "",
+      timeLoan: "3",
+      timeLoanCurrent: "",
+      debtPaymentMethod: {
+        "Trả gốc đều hàng tháng, lãi trả hàng tháng": false,
+        "Trả gốc, lãi đều hàng tháng (Niên kim)": false,
+        "Trả gốc cuối kỳ, lãi hàng tháng": false,
+        "Trả gốc tăng dần, lãi giảm dần": false,
+        "other": false,
       },
-      "other": {
-        index: true,
-        content: ""
-      },
-    },
-    priceLoan: "",
-    timeLoan: "3",
-    timeLoanCurrent: "",
-    debtPaymentMethod: {
-      "Trả gốc đều hàng tháng, lãi trả hàng tháng": false,
-      "Trả gốc, lãi đều hàng tháng (Niên kim)": false,
-      "Trả gốc cuối kỳ, lãi hàng tháng": false,
-      "Trả gốc tăng dần, lãi giảm dần": false,
-      "other": false,
-    },
-    debtPaymentMethodOther: "",
-    otherSuggestions: "",
+      debtPaymentMethodOther: "",
+      otherSuggestions: "",
+    }
   }
 
   const onSubmit = (values) => {
+    sessionStorage.setItem('loanPurposeInit', JSON.stringify(values))
     let loanPurpose = ""
     Object.keys(values.loanPurpose).filter(key => values.loanPurpose[key].index).map((key) => {
       if (key !== "other") {
@@ -223,6 +230,7 @@ const LoanPurpose = (props) => {
         </Box>
         <Formik
           initialValues={initialValues}
+          enableReinitialize={true}
           validationSchema={validationSchema}
           onSubmit={onSubmit}
         >

@@ -19,18 +19,25 @@ const InfoCollateral = (props) => {
         status: "",
     }
 
-    const initialValues = {
-        collaterals: [
-            {
-                name: "",
-                owner: "",
-                relationOwnerAndCustomer: "",
-                status: 0,
-            }
-        ]
+    const collateralsInit = JSON.parse(sessionStorage.getItem("collateralsInit"))
+    let initialValues = {}
+    if (collateralsInit) {
+        initialValues = collateralsInit
+    } else {
+        initialValues = {
+            collaterals: [
+                {
+                    name: "",
+                    owner: "",
+                    relationOwnerAndCustomer: "",
+                    status: 0,
+                }
+            ]
+        }
     }
 
     const onSubmit = (values) => {
+        sessionStorage.setItem('collateralsInit', JSON.stringify(values))
         sessionStorage.setItem('collaterals', JSON.stringify(values.collaterals))
         props.changeStep(props.step + 1)
     }
@@ -44,6 +51,7 @@ const InfoCollateral = (props) => {
 
                 <Formik
                     initialValues={initialValues}
+                    enableReinitialize={true}
                     validationSchema={validationSchema}
                     onSubmit={onSubmit}
 

@@ -8,29 +8,36 @@ const validationSchema = yup.object().shape({
     wage: yup.string().required("Đây là trường bắt buộc"),
 })
 const DebtRepaymentSource = (props) => {
-    const initialValues = {
-        wage: "",
-        dividend: "",
-        profit: "",
-        propertyRentalIncome: "",
-        otherIncome: "",
-        wageWifeOrHusband: "",
-        dividendWifeOrHusband: "",
-        profitWifeOrHusband: "",
-        propertyRentalIncomeWifeOrHusband: "",
-        otherIncomeWifeOrHusband: "",
-        wageSupporter: "",
-        dividendSupporter: "",
-        profitSupporter: "",
-        propertyRentalIncomeSupporter: "",
-        otherIncomeSupporter: "",
-        costOfLiving: "",
-        interestPaymentsOnLoans: "",
-        otherCosts: "",
-        otherExtraordinaryIncome: "",
+    const debtRepaymentSourceInit = JSON.parse(sessionStorage.getItem("debtRepaymentSourceInit"))
+    let initialValues = {}
+    if (debtRepaymentSourceInit) {
+        initialValues = debtRepaymentSourceInit
+    } else {
+        initialValues = {
+            wage: "",
+            dividend: "",
+            profit: "",
+            propertyRentalIncome: "",
+            otherIncome: "",
+            wageWifeOrHusband: "",
+            dividendWifeOrHusband: "",
+            profitWifeOrHusband: "",
+            propertyRentalIncomeWifeOrHusband: "",
+            otherIncomeWifeOrHusband: "",
+            wageSupporter: "",
+            dividendSupporter: "",
+            profitSupporter: "",
+            propertyRentalIncomeSupporter: "",
+            otherIncomeSupporter: "",
+            costOfLiving: "",
+            interestPaymentsOnLoans: "",
+            otherCosts: "",
+            otherExtraordinaryIncome: "",
+        }
     }
 
     const onSubmit = (values) => {
+        sessionStorage.setItem('debtRepaymentSourceInit', JSON.stringify(values))
         sessionStorage.setItem('debtRepaymentSource', JSON.stringify(values))
         props.changeStep(props.step + 1)
     }
@@ -42,6 +49,7 @@ const DebtRepaymentSource = (props) => {
                 </Box>
                 <Formik
                     initialValues={initialValues}
+                    enableReinitialize={true}
                     validationSchema={validationSchema}
                     onSubmit={onSubmit}
                 >

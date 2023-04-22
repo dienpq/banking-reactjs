@@ -27,7 +27,7 @@ const InfoDeclaration = (props) => {
         steps = steps.filter((step) => step !== 'Thông tin tài sản bảo đảm');
     }
 
-    const [step, setStep] = useState(2)
+    const [step, setStep] = useState(0)
     const [statusStep, setStatusStep] = useState(false)
 
     const handleChangeStep = (status) => {

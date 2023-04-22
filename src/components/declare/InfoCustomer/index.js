@@ -38,37 +38,45 @@ const validationSchema = yup.object().shape({
 
 const InfoCustomer = (props) => {
     const customer = JSON.parse(sessionStorage.getItem("customer"))
-    const initialValues = {
-        ...customer,
-        gender: "",
-        birthday: null,
-        idNumber: "",
-        issuedDate: null,
-        issuedPlace: "",
-        permanentAddress: "",
-        currentResidence: "",
-        marital: "Độc thân",
-        maritalOther: "",
-        academicLevel: "THPT",
-        academicLevelOther: "",
-        homeOwnership: {
-            "Nhà riêng và trả hoàn toàn": false,
-            "Nhà riêng và thế chấp": false,
-            "Nhà công ty cung cấp": false,
-            "Nhà thuê": false,
-            "Nhà ở cùng bố mẹ, bạn bè, họ hàng": false,
-            "other": false,
-        },
-        homeOwnershipOther: "",
-        vehicles: {
-            "Ô tô": false,
-            "Xe máy": false,
-            "other": false
-        },
-        vehiclesOther: ""
+
+    const customerInit = JSON.parse(sessionStorage.getItem("customerInit"))
+    let initialValues = {}
+    if (customerInit) {
+        initialValues = customerInit
+    } else {
+        initialValues = {
+            ...customer,
+            gender: "",
+            birthday: null,
+            idNumber: "",
+            issuedDate: null,
+            issuedPlace: "",
+            permanentAddress: "",
+            currentResidence: "",
+            marital: "Độc thân",
+            maritalOther: "",
+            academicLevel: "THPT",
+            academicLevelOther: "",
+            homeOwnership: {
+                "Nhà riêng và trả hoàn toàn": false,
+                "Nhà riêng và thế chấp": false,
+                "Nhà công ty cung cấp": false,
+                "Nhà thuê": false,
+                "Nhà ở cùng bố mẹ, bạn bè, họ hàng": false,
+                "other": false,
+            },
+            homeOwnershipOther: "",
+            vehicles: {
+                "Ô tô": false,
+                "Xe máy": false,
+                "other": false
+            },
+            vehiclesOther: ""
+        }
     }
 
     const onSubmit = (values) => {
+        sessionStorage.setItem('customerInit', JSON.stringify(values))
         let infoCustomer = {
             fullname: values.fullname,
             gender: values.gender,
@@ -99,6 +107,7 @@ const InfoCustomer = (props) => {
                 </Box>
                 <Formik
                     initialValues={initialValues}
+                    enableReinitialize={true}
                     validationSchema={validationSchema}
                     onSubmit={onSubmit}
                 >
