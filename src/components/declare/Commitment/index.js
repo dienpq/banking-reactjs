@@ -39,12 +39,11 @@ const Commitment = (props) => {
                             })
                         }
                         props.changeStep(props.step + 1);
+                        sessionStorage.clear();
                     })
                     .catch(error => console.log(error));
             })
             .catch(error => console.log(error));
-
-        sessionStorage.clear();
     }
     return (
         <>
