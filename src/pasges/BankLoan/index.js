@@ -5,6 +5,29 @@ import CardBankLoan from "../../components/CardBankLoan";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
+function formatDate(dateFormat, format) {
+    const date = new Date(dateFormat)
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear().toString();
+    let formattedDate;
+
+    switch (format) {
+        case 'iso':
+            formattedDate = `${year}-${month}-${day}`;
+            break;
+        case 'vn':
+            formattedDate = `${day}/${month}/${year}`;
+            break;
+        default:
+            formattedDate = date.toLocaleDateString();
+            break;
+    }
+
+    return formattedDate;
+}
+
+
 const BankLoan = () => {
     const [loans, setLoans] = useState([])
 
@@ -49,7 +72,7 @@ const BankLoan = () => {
                                             <CardBankLoan
                                                 code={value.loan.code}
                                                 price={value.loan.priceRemaining}
-                                                expiryDate={new Date(value.contract.createdAt).toLocaleDateString("en-US")}
+                                                expiryDate={formatDate(value.contract.createdAt, 'vn')}
                                                 status={value.contract.status}
                                             />
                                         </Link>

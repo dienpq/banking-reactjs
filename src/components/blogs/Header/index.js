@@ -101,7 +101,7 @@ const Header = () => {
                                             <Typography variant='body1' fontWeight='600' color='#616161'>
                                                 {
                                                     hiddenAccountBalance ? '*** *** ***' :
-                                                        accountBalance + 'đ'
+                                                        accountBalance ? accountBalance.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) : "0 đ"
                                                 }
                                             </Typography>
                                             {

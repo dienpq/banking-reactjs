@@ -15,7 +15,7 @@ const CardBankLoan = (props) => {
                     <CardContent>
                         <Stack direction="row" justifyContent="space-between">
                             <Typography variant='body1'>
-                                {props.price} đ
+                                {props.price ? props.price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) : "0 đ"}
                             </Typography>
                             <Typography variant='caption'>
                                 {props.expiryDate}
