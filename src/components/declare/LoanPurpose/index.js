@@ -181,7 +181,7 @@ const LoanPurpose = (props) => {
         },
       },
       priceLoan: "",
-      timeLoan: expiryDate.length > 0 ? expiryDate[0].amountMonth + '|' + expiryDate[0].interest : "",
+      timeLoan: expiryDate.length > 0 ? expiryDate[0].amountMonth + '|' + expiryDate[0].interest + '|' + expiryDate[0].penaltyInterestRate : "",
       debtPaymentMethod: {
         "Trả gốc đều hàng tháng, lãi trả hàng tháng": false,
         "Trả gốc, lãi đều hàng tháng (Niên kim)": false,
@@ -227,6 +227,7 @@ const LoanPurpose = (props) => {
       priceLoan: values.priceLoan,
       timeLoan: parseInt(timeLoan[0]),
       interestLoan: parseFloat(timeLoan[1]),
+      penaltyInterestRate: parseFloat(timeLoan[2]),
       debtPaymentMethod: formatDataObject(values.debtPaymentMethod, values.debtPaymentMethodOther),
       otherSuggestions: values.otherSuggestions,
     }
@@ -489,7 +490,7 @@ const LoanPurpose = (props) => {
                         onChange={handleChange}
                       >
                         {expiryDate.map((item, index) => (
-                          <MenuItem key={index} value={`${item.amountMonth}|${item.interest}`}>{item.amountMonth} ({item.interest}%)</MenuItem>
+                          <MenuItem key={index} value={`${item.amountMonth}|${item.interest}|${item.penaltyInterestRate}`}>{item.amountMonth} ({item.interest}%)</MenuItem>
                         ))}
                       </TextField>
                     </FormControl>
